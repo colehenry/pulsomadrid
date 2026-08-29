@@ -1,0 +1,58 @@
+# Agent context + local planning docs (intentionally not committed)
+AGENTS.md
+CLAUDE.md
+docs/
+.claude/
+
+# Secrets / credentials
+.env
+.env.*
+!.env.example
+*.pem
+*-key.json
+service-account*.json
+application_default_credentials.json
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+build/
+*.egg-info/
+
+# Node
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+npm-debug.log*
+.pnpm-debug.log*
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
+
+# Data — raw/large artifacts never belong in git
+data/
+*.pbf
+*.gtfs.zip
+*.parquet
+*.pmtiles
+*.gpkg
+*.sqlite
+# ...but small hand-picked samples in data-samples/ are committed on purpose
+!data-samples/**
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
