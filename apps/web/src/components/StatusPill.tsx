@@ -30,6 +30,9 @@ export default function StatusPill({ count, observedAt, upstreamOk, ageSeconds }
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
+            // 24-hour in both languages. A Renfe platform board does not say 9:03 PM,
+            // and English defaulting to 12-hour made the same feed look like two clocks.
+            hour12: false,
           }),
         });
 

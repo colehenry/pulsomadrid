@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -21,7 +22,29 @@ from .models import NetworkResponse, VehiclesResponse
 from .realtime import VehicleFeed
 from .warehouse import Snapshot, read_snapshot
 
-log = logging.getLogger("pulso_api")
+log = logging.getLogger(__name__)
+
+
+def _configure_logging() -> None:
+    """Send this package's log lines to the console.
+
+    uvicorn attaches handlers to its own `uvicorn.*` loggers and leaves the root logger
+    bare, so every log.info() in this package went nowhere: a request that matched no
+    vehicles at all looked exactly like one that matched 130. Configure the `app` logger
+    directly rather than calling basicConfig, which only does anything when the root
+    logger happens to have no handlers yet.
+    """
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(
+        "%(asctime)s %(levelname)-7s %(name)s %(message)s", datefmt="%H:%M:%S"))
+    package = logging.getLogger(__name__.split(".")[0])
+    package.handlers.clear()  # --reload re-imports this module; do not stack handlers
+    package.addHandler(handler)
+    package.setLevel(os.getenv("LOG_LEVEL", "INFO").upper())
+    package.propagate = False
+
+
+_configure_logging()
 
 cfg = Config()
 
