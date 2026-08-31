@@ -3,7 +3,7 @@
 Next.js 16 (App Router) + TypeScript + MapLibre GL. Spanish first, English toggle.
 
 ```bash
-scripts/dev.sh web        # http://localhost:3000  → redirects to /es
+scripts/dev.sh web        # http://localhost:3000
 ```
 
 It reads `apps/api`, so run both (`scripts/dev.sh`) or the map will be empty.
@@ -14,8 +14,11 @@ It reads `apps/api`, so run both (`scripts/dev.sh`) or the map will be empty.
 `next-intl` was wired before the first component was written. Retrofitting means
 touching every string in the app, and the plan is Spanish-first with an English toggle.
 
-The locale is a URL segment — `/es`, `/en` — resolved in `src/proxy.ts` (Next 16's
-rename of `middleware.ts`). Strings live in `messages/es.json` and `messages/en.json`;
+Spanish is at `/`; English is at `/en`. The locale is resolved in `src/proxy.ts` (Next
+16's rename of `middleware.ts`) from the URL prefix, then a cookie, then the browser's
+`Accept-Language` — so a Spanish browser gets Spanish and an English one is sent to
+`/en`, and the ES/EN toggle overrides that for good. `/es` redirects to `/`, so there is
+one URL per language. Strings live in `messages/es.json` and `messages/en.json`;
 nothing hardcodes a user-facing string in a component. Times are formatted in
 `Europe/Madrid` regardless of where the browser is, because the reader is standing in
 Madrid.
