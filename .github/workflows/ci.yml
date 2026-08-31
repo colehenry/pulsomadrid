@@ -1,0 +1,63 @@
+# CI runs scripts/check.sh — the same command, not a copy of it.
+#
+# The point of calling the script rather than listing ruff/mypy/pytest/eslint/tsc here
+# is that CI and a local run cannot drift: adding a check to the script adds it to CI.
+# All CI does on top is install what the script assumes is already on the machine.
+#
+# Nothing here touches GCP. Every check is lint, types, or tests over committed
+# fixtures, so no credentials are needed and no query bytes are billed. The data audit
+# (scripts/audit-gtfs.sh) does read BigQuery, so it stays a local command for now.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A second push to the same branch makes the first run's answer irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          # Both Python projects resolve from their own uv.lock; caching by those keeps
+          # a run from re-downloading duckdb and the BigQuery client every time.
+          cache-dependency-glob: "**/uv.lock"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      # `npm ci` rather than `npm install`: it installs exactly package-lock.json and
+      # fails if the lockfile and package.json disagree, which is what a gate should do.
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: npm ci
+
+      # ruff, mypy, pytest (api + pipeline), eslint, tsc. uv resolves its own venvs.
+      - name: Lint, typecheck, test
+        run: scripts/check.sh
+
+      # The production build catches what lint and tsc cannot: a bad next-intl route, a
+      # server component using a client-only API, a page that fails to prerender.
+      - name: Build the web app
+        working-directory: apps/web
+        run: npm run build
