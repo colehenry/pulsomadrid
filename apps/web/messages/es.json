@@ -1,0 +1,33 @@
+{
+  "app": {
+    "title": "Pulso Madrid",
+    "subtitle": "Cercanías en tiempo real"
+  },
+  "status": {
+    "trains": "{count, plural, =0 {sin trenes} one {# tren} other {# trenes}}",
+    "updated": "Actualizado a las {time}",
+    "stale": "Datos de hace {minutes} min",
+    "unreachable": "Renfe no responde",
+    "waiting": "Buscando trenes…",
+    "networkError": "No se pudo cargar la red de Cercanías"
+  },
+  "train": {
+    "number": "Tren {number}",
+    "towards": "Sentido {station}",
+    "STOPPED_AT": "Parado en {station}",
+    "INCOMING_AT": "Llegando a {station}",
+    "IN_TRANSIT_TO": "En camino a {station}",
+    "UNKNOWN": "Posición sin estado",
+    "calls": "{count} paradas en el trayecto",
+    "destination": "Destino {station}"
+  },
+  "legend": {
+    "lines": "Líneas",
+    "showAll": "Todas"
+  },
+  "locale": {
+    "label": "Idioma",
+    "es": "ES",
+    "en": "EN"
+  }
+}

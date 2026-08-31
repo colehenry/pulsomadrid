@@ -1,0 +1,38 @@
+[project]
+name = "pulso-api"
+version = "0.1.0"
+description = "Read API for the Pulso Madrid map: static network + live Cercanias vehicles"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "google-cloud-bigquery>=3.25",
+  "httpx>=0.27",
+  "pydantic>=2.9",
+  "uvicorn[standard]>=0.30",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11",
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/app"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src", "tests"]
+ignore_missing_imports = true

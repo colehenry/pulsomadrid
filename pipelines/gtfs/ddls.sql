@@ -254,7 +254,7 @@ CLUSTER BY line_id;
 CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_stop_patterns` (
   stop_pattern_id   STRING    NOT NULL OPTIONS(description="First 12 hex characters of the SHA256 of the ordered station_id list. The same list of stations always produces the same id, including across feed republishes"),
   line_id           STRING    NOT NULL OPTIONS(description="Line these trips run on, e.g. 'C5'"),
-  direction_code    STRING             OPTIONS(description="Direction of the routes that use this pattern. See dimensions.cercanias_routes.direction_code"),
+  direction_towards_station_id STRING      OPTIONS(description="The terminus this pattern heads towards, as station_id -- what a platform sign means by 'towards Humanes'. Taken from the last station of the full-length pattern running the same way along the line. Not the same as destination_station_id, which is where THIS pattern actually stops: a C5 terminating at Fuenlabrada is still heading towards Humanes"),
 
   stations          STRUCT<
                       ids    ARRAY<STRING>,

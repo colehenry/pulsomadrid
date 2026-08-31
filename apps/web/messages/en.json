@@ -1,0 +1,33 @@
+{
+  "app": {
+    "title": "Pulso Madrid",
+    "subtitle": "Cercanías, live"
+  },
+  "status": {
+    "trains": "{count, plural, =0 {no trains} one {# train} other {# trains}}",
+    "updated": "Updated at {time}",
+    "stale": "Data is {minutes} min old",
+    "unreachable": "Renfe is not responding",
+    "waiting": "Looking for trains…",
+    "networkError": "Could not load the Cercanías network"
+  },
+  "train": {
+    "number": "Train {number}",
+    "towards": "Towards {station}",
+    "STOPPED_AT": "Stopped at {station}",
+    "INCOMING_AT": "Arriving at {station}",
+    "IN_TRANSIT_TO": "En route to {station}",
+    "UNKNOWN": "Position with no status",
+    "calls": "{count} stops on this run",
+    "destination": "Terminates at {station}"
+  },
+  "legend": {
+    "lines": "Lines",
+    "showAll": "All"
+  },
+  "locale": {
+    "label": "Language",
+    "es": "ES",
+    "en": "EN"
+  }
+}

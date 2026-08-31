@@ -96,7 +96,28 @@ checks = [
  ("stations with a CRTM match further than 1km away",
   "SELECT COUNT(*) FROM cercanias_stations WHERE crtm_match_distance_m > 1000", 0),
 ]
-bad = 0
+# A column that is NULL on every row is almost always a bug, not a design. It is how
+# a DDL/transform name mismatch hides: BigQuery silently ignores a Parquet column it
+# has no slot for, and leaves the declared-but-absent one empty. Row counts stay right.
+# Only our modelled tables. A raw_ table mirrors the publisher, so an empty column
+# there is their choice, not our defect.
+print("\n  Modelled columns that are NULL on every row:")
+empty = 0
+for (tbl,) in con.execute(
+        "SELECT table_name FROM information_schema.tables "
+        "WHERE table_name NOT LIKE 'raw_%' ORDER BY 1").fetchall():
+    n = con.execute(f'SELECT COUNT(*) FROM "{tbl}"').fetchone()[0]
+    if not n:
+        continue
+    for (col,) in con.execute(
+            f"SELECT column_name FROM information_schema.columns WHERE table_name = '{tbl}'").fetchall():
+        if con.execute(f'SELECT COUNT("{col}") FROM "{tbl}"').fetchone()[0] == 0:
+            print(f"  FAIL {tbl}.{col} is empty in all {n} rows")
+            empty += 1
+if not empty:
+    print("  OK   none")
+
+bad = empty
 for label, sql, want in checks:
     got = con.execute(sql).fetchone()[0]
     ok = got == want
