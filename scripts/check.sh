@@ -13,6 +13,11 @@ if [ -f apps/api/pyproject.toml ]; then
   step "pytest" bash -c 'cd apps/api && uv run pytest -q'
 else warn "apps/api not scaffolded yet"; fi
 
+if [ -f pipelines/gtfs/pyproject.toml ]; then
+  step "gtfs ruff"   bash -c 'cd pipelines/gtfs && uv run ruff check src tests'
+  step "gtfs pytest" bash -c 'cd pipelines/gtfs && uv run pytest -q'
+else warn "pipelines/gtfs not scaffolded yet"; fi
+
 if [ -f apps/web/package.json ]; then
   step "eslint" bash -c 'cd apps/web && npm run lint'
   step "tsc"    bash -c 'cd apps/web && npx tsc --noEmit'

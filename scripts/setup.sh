@@ -52,7 +52,7 @@ if have gcloud && [ -n "${acct:-}" ]; then
   # Datasets, and their locations — location is permanent, so verify it.
   if have bq; then
     existing="$(bq ls --format=json 2>/dev/null | python3 -c 'import sys,json;print(" ".join(d["datasetReference"]["datasetId"] for d in json.load(sys.stdin)))' 2>/dev/null)"
-    for ds in "$BQ_DATASET_RAW" "$BQ_DATASET_CLEAN" "$BQ_DATASET_ANALYTICS"; do
+    for ds in "$BQ_DATASET_RAW" "$BQ_DATASET_DIMENSIONS" "$BQ_DATASET_FACTS" "$BQ_DATASET_MARTS" "$BQ_DATASET_OPS"; do
       if printf '%s' "$existing" | grep -qw "$ds"; then
         loc="$(bq show --format=json "$GCP_PROJECT_ID:$ds" 2>/dev/null | python3 -c 'import sys,json;print(json.load(sys.stdin)["location"])' 2>/dev/null)"
         if [ "$loc" = "$BQ_LOCATION" ]; then ok "dataset $ds ($loc)"

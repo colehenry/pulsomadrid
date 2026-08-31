@@ -26,6 +26,17 @@ scripts/dev.sh      # run web + api
 scripts/check.sh    # lint, typecheck, test
 ```
 
+## Ingestion
+
+```bash
+cd pipelines/gtfs
+uv run pulso-gtfs --dry-run    # build everything locally, load nothing
+uv run pulso-gtfs              # full run into BigQuery
+```
+
+Transforms run in DuckDB and the result is loaded as Parquet, because BigQuery bills
+for query bytes but not for load jobs. See `pipelines/gtfs/README.md`.
+
 ## Data sources
 
 Madrid Ayuntamiento open data, CRTM GTFS, Renfe Cercanías GTFS-RT, INE, Catastro,

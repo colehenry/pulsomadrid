@@ -13,8 +13,10 @@ fi
 : "${GCP_REGION:=europe-southwest1}"
 : "${BQ_LOCATION:=EU}"
 : "${BQ_DATASET_RAW:=raw}"
-: "${BQ_DATASET_CLEAN:=clean}"
-: "${BQ_DATASET_ANALYTICS:=analytics}"
+: "${BQ_DATASET_FACTS:=facts}"
+: "${BQ_DATASET_MARTS:=marts}"
+: "${BQ_DATASET_DIMENSIONS:=dimensions}"
+: "${BQ_DATASET_OPS:=ops}"
 
 if [ -t 1 ]; then
   R=$'\033[31m'; G=$'\033[32m'; Y=$'\033[33m'; B=$'\033[1m'; X=$'\033[0m'
