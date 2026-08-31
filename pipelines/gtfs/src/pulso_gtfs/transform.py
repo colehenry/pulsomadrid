@@ -389,6 +389,31 @@ def build_outputs(con: duckdb.DuckDBPyConnection, load_id: str, sha: str) -> Non
                      FROM raw_crtm_gtfs_routes) cr ON cr.line_id = r.line_id
         GROUP BY r.line_id
     """)
+    # Route geometry for drawing the network. shape_id is '10_<line>' and
+    # '10_<line>_INV', so it encodes line and direction but NOT stopping pattern —
+    # 23 shapes for 119 patterns. It draws the track, not what any train does.
+    #
+    # Emitted as WKT text; BigQuery parses it into GEOGRAPHY on load, the same way
+    # cercanias_stations.location works.
+    con.execute(f"""
+        CREATE TABLE out_cercanias_line_shapes AS
+        WITH pts AS (
+          SELECT trim(shape_id) AS shape_id,
+                 CAST(trim(shape_pt_sequence) AS BIGINT) AS seq,
+                 TRY_CAST(trim(shape_pt_lon) AS DOUBLE) AS lon,
+                 TRY_CAST(trim(shape_pt_lat) AS DOUBLE) AS lat
+          FROM raw_renfe_gtfs_shapes
+          WHERE TRY_CAST(trim(shape_pt_lat) AS DOUBLE) IS NOT NULL
+            AND TRY_CAST(trim(shape_pt_lon) AS DOUBLE) IS NOT NULL)
+        SELECT p.shape_id,
+               regexp_extract(p.shape_id, '^10_([A-Za-z0-9]+?)(_INV)?$', 1) AS line_id,
+               'LINESTRING(' || string_agg(p.lon || ' ' || p.lat, ', ' ORDER BY p.seq) || ')'
+                   AS geometry,
+               COUNT(*) AS n_points,
+               '{load_id}' AS load_id, {now} AS load_time
+        FROM pts p GROUP BY p.shape_id
+        HAVING COUNT(*) >= 2
+    """)
     con.execute(f"""
         CREATE TABLE out_cercanias_stop_patterns AS
         WITH stations AS (

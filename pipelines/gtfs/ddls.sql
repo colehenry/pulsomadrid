@@ -235,6 +235,21 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_stations` (
 CLUSTER BY station_id;
 
 
+-- Route geometry, for drawing the network. About 23 rows.
+CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_line_shapes` (
+  shape_id   STRING    NOT NULL OPTIONS(description="Renfe's shape identifier, e.g. '10_C5' or '10_C5_INV'. Encodes the line and the direction, but not the stopping pattern: there are 23 shapes for 119 patterns, because a shape is the track a train runs on rather than the stations it calls at"),
+  line_id    STRING    NOT NULL OPTIONS(description="Line this geometry belongs to, e.g. 'C5'. Parsed from shape_id"),
+  geometry   GEOGRAPHY          OPTIONS(description="The route as a LINESTRING in WGS84, points ordered by Renfe's shape_pt_sequence"),
+  n_points   INT64              OPTIONS(description="Number of coordinate pairs in the line. Shapes with fewer than 2 points are dropped, since they cannot be drawn"),
+
+  load_id    STRING    NOT NULL OPTIONS(description="Identifier of the pipeline run that wrote this row"),
+  load_time  TIMESTAMP NOT NULL OPTIONS(description="When this row was written"),
+
+  PRIMARY KEY (shape_id) NOT ENFORCED
+)
+CLUSTER BY line_id;
+
+
 -- One row per distinct ordered list of stations. About 119 rows for Madrid.
 CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_stop_patterns` (
   stop_pattern_id   STRING    NOT NULL OPTIONS(description="First 12 hex characters of the SHA256 of the ordered station_id list. The same list of stations always produces the same id, including across feed republishes"),

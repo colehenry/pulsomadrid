@@ -87,6 +87,7 @@ def summarise(con) -> None:
         ("stations", "SELECT COUNT(*) FROM out_cercanias_stations"),
         ("lines", "SELECT COUNT(*) FROM out_cercanias_lines"),
         ("stop patterns", "SELECT COUNT(*) FROM out_cercanias_stop_patterns"),
+        ("line shapes", "SELECT COUNT(*) FROM out_cercanias_line_shapes"),
         ("stations w/ CRTM zone", "SELECT COUNT(crtm_zone_id) FROM out_cercanias_stations"),
         ("REJECTED", "SELECT COUNT(*) FROM out_rejected_rows"),
     ]:

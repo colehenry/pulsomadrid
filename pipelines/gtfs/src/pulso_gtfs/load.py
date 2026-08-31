@@ -33,6 +33,7 @@ DIMENSION_TABLES = {
     "cercanias_stations": "cercanias_stations",
     "cercanias_lines": "cercanias_lines",
     "cercanias_stop_patterns": "cercanias_stop_patterns",
+    "cercanias_line_shapes": "cercanias_line_shapes",
 }
 OPS_TABLES = {"rejected_rows": "rejected_rows"}
 FACT_TABLES = {

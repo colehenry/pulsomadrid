@@ -40,7 +40,7 @@ for spec in \
   "raw:renfe_gtfs_routes" "raw:renfe_gtfs_trips" "raw:renfe_gtfs_stop_times" \
   "raw:renfe_gtfs_stops" "raw:renfe_gtfs_calendar" "raw:crtm_gtfs_stops" \
   "dimensions:cercanias_stations" "dimensions:cercanias_lines" \
-  "dimensions:cercanias_stop_patterns" \
+  "dimensions:cercanias_stop_patterns" "dimensions:cercanias_line_shapes" \
   "facts:cercanias_scheduled_trips" "facts:cercanias_scheduled_stops" \
   "ops:load_runs" "ops:rejected_rows"; do
   d="${spec%%:*}"; t="${spec##*:}"
@@ -88,6 +88,11 @@ checks = [
  ("patterns belonging to more than one line",
   "SELECT COUNT(*) FROM (SELECT stop_pattern_id FROM cercanias_scheduled_trips "
   "GROUP BY 1 HAVING COUNT(DISTINCT line_id)>1)", 0),
+ ("line shapes with fewer than 2 points",
+  "SELECT COUNT(*) FROM cercanias_line_shapes WHERE n_points < 2", 0),
+ ("line shapes whose line does not exist",
+  "SELECT COUNT(*) FROM cercanias_line_shapes s LEFT JOIN cercanias_lines l USING(line_id) "
+  "WHERE l.line_id IS NULL", 0),
  ("stations with a CRTM match further than 1km away",
   "SELECT COUNT(*) FROM cercanias_stations WHERE crtm_match_distance_m > 1000", 0),
 ]
