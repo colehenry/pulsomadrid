@@ -5,6 +5,7 @@ The fixture in tests/fixtures/ was cut from a live response on 2026-08-31T05:46Z
 """
 from __future__ import annotations
 
+import asyncio
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -102,6 +103,29 @@ async def test_upstream_failure_replays_the_last_good_snapshot(feed_payload: dic
     assert [v.train_number for v in after_outage.vehicles] == ["19561", "21806", "21008"]
     assert not feed.upstream_ok
     assert after_outage.observed_at == good.observed_at
+    await feed.close()
+
+
+async def test_concurrent_cold_requests_make_one_upstream_fetch(feed_payload: dict,
+                                                                snapshot: Snapshot) -> None:
+    """The cache alone does not stop a stampede — only requests arriving after a fetch
+    has finished can hit it. Ten arriving during one must still produce a single fetch:
+    Renfe is a public feed we do not own, and Cloud Run puts up to 80 concurrent requests
+    on one instance."""
+    calls = {"n": 0}
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        await asyncio.sleep(0.05)  # hold it open so the other nine pile up behind it
+        return httpx.Response(200, json=feed_payload)
+
+    feed = VehicleFeed("https://example.invalid/vehicle_positions.json", cache_seconds=10)
+    feed._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+
+    results = await asyncio.gather(*(feed.current(snapshot) for _ in range(10)))
+
+    assert calls["n"] == 1
+    assert all(r is not None and len(r.vehicles) == 3 for r in results)
     await feed.close()
 
 

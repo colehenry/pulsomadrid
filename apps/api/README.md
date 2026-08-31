@@ -43,13 +43,24 @@ come from Renfe.
 `at_station` is the display name of the feed's `stop_id` — the station the train is
 standing at when `status` is `STOPPED_AT`, and the one it is heading for otherwise.
 
-## When the upstream is down
+## Protecting a third-party feed we do not own
 
-Two protections. A 10-second cache stops a burst of page loads becoming a burst of
-upstream requests, and a last-good fallback means an outage replays the previous
-snapshot with its original `observed_at` and `upstream_ok: false`, rather than failing.
-The page draws the network and says the data is old. If the upstream has never answered
-since the process started, the response is `200` with an empty list, not an error.
+The whole map depends on one Renfe endpoint, so `/api/vehicles` has three guards.
+
+**A 10-second cache**, so a burst of page loads is not a burst of upstream requests.
+
+**A single-flight lock**, so concurrent requests that all miss the cache produce one
+fetch between them rather than one each. This is the one that is easy to leave out and
+hard to notice missing: a cache on its own only helps requests arriving *after* a fetch
+has finished, and every request arriving during one still fetches. Not a rare race —
+Cloud Run puts up to 80 concurrent requests on an instance, the cache expires every ten
+seconds, and a cold instance starts with nothing cached at all. It was missing until a
+log line showed three identical parses of the same feed timestamp.
+
+**A last-good fallback**, so an outage replays the previous snapshot with its original
+`observed_at` and `upstream_ok: false` rather than failing. The page draws the network
+and says the data is old. If the upstream has never answered since the process started,
+the response is `200` with an empty list, not an error.
 
 ## `destination` and `towards` are different questions
 

@@ -8,6 +8,7 @@ also catch long-distance services that happen to pass through.
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -89,10 +90,20 @@ def parse_feed(payload: dict, snapshot: Snapshot) -> VehicleSnapshot:
 class VehicleFeed:
     """Fetches the feed, with a short cache and a last-good fallback.
 
-    Two independent protections, because the upstream is a third party we do not control:
-    the cache stops a burst of page loads becoming a burst of upstream requests, and the
-    fallback means an upstream outage degrades the map to stale data rather than breaking
-    the page.
+    Three protections, because the upstream is a third party we do not control and the
+    whole map depends on it:
+
+    - a short cache, so a burst of page loads is not a burst of upstream requests;
+    - a single-flight lock, so concurrent requests that all miss the cache produce one
+      fetch between them rather than one each;
+    - a last-good fallback, so an outage degrades the map to stale data rather than
+      breaking the page.
+
+    The lock is the one that is easy to leave out and hard to notice missing. Without it
+    the cache only helps requests that arrive after a fetch has finished: every request
+    arriving *during* one still fetches. That is not a rare race — Cloud Run puts up to
+    80 concurrent requests on an instance, the cache expires every few seconds, and a
+    cold instance starts with nothing cached at all.
     """
 
     def __init__(self, url: str, *, timeout: float = 10.0, cache_seconds: float = 10.0) -> None:
@@ -101,6 +112,7 @@ class VehicleFeed:
         self._client = httpx.AsyncClient(timeout=timeout, follow_redirects=True)
         self._last: VehicleSnapshot | None = None
         self._upstream_ok = False
+        self._lock = asyncio.Lock()
 
     async def close(self) -> None:
         await self._client.aclose()
@@ -109,13 +121,32 @@ class VehicleFeed:
     def upstream_ok(self) -> bool:
         return self._upstream_ok
 
+    def _cached(self) -> VehicleSnapshot | None:
+        """The last snapshot if it is still inside the cache window, else None."""
+        if self._last is None or not self._upstream_ok:
+            return None
+        age = (datetime.now(UTC) - self._last.fetched_at).total_seconds()
+        return self._last if age < self._cache_seconds else None
+
     async def current(self, snapshot: Snapshot) -> VehicleSnapshot | None:
         """The current Madrid vehicles, or the last good snapshot if the fetch fails."""
-        fresh_until = self._cache_seconds
-        if self._last is not None and self._upstream_ok:
-            age = (datetime.now(UTC) - self._last.fetched_at).total_seconds()
-            if age < fresh_until:
-                return self._last
+        cached = self._cached()
+        if cached is not None:
+            return cached
+
+        async with self._lock:
+            # Check again: while this request waited for the lock, whoever held it has
+            # very likely refreshed the snapshot already. Without this second check the
+            # lock would serialise the fetches instead of collapsing them into one.
+            cached = self._cached()
+            if cached is not None:
+                return cached
+            await self._refresh(snapshot)
+
+        return self._last
+
+    async def _refresh(self, snapshot: Snapshot) -> None:
+        """Fetch and parse once. Called only under the lock."""
         try:
             response = await self._client.get(self._url)
             response.raise_for_status()
@@ -127,4 +158,3 @@ class VehicleFeed:
             self._upstream_ok = False
             log.warning("vehicle feed unavailable (%s: %s) — serving last known snapshot",
                         type(exc).__name__, exc)
-        return self._last
