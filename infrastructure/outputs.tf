@@ -7,3 +7,4 @@ output "raw_bucket" {
   description = "gs:// URI of the immutable source archive."
   value       = "gs://${google_storage_bucket.raw.name}"
 }
+

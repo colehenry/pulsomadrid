@@ -13,6 +13,14 @@ while building the first pipeline, then imported. That is why the useful check i
 | 5 BigQuery datasets | `raw`, `dimensions`, `facts`, `marts`, `ops`. Location is **permanent** — see `bq_location` |
 | GCS archive bucket | `pulso-madrid-raw`, with Nearline at 30 days and Coldline at 90 |
 | Enabled APIs | BigQuery, Storage, Cloud Run, Scheduler, Artifact Registry, Cloud Build, Logging, Monitoring, IAM |
+**Nothing that runs code is managed here.** The web app is built and served by Netlify
+(`netlify.toml`); the API and the ingestion job run on Railway, which deploys from git.
+This configuration is the data layer only: datasets, the archive bucket, and the APIs
+they need. See `docs/learning/stack-audit.md` for why that changed.
+
+Several enabled APIs — Cloud Run, Scheduler, Artifact Registry, Cloud Build — are now
+unused. They are left enabled deliberately: `disable_on_destroy = false`, and turning off
+an API is the kind of change that breaks something quietly months later.
 
 ## What is deliberately not managed here
 
@@ -61,16 +69,14 @@ terraform apply         # you run this, never an agent
 `terraform apply` is the one command here that changes real infrastructure. Per
 `AGENTS.md` agents print it and never run it.
 
-## Current plan output
+## Plan output
 
-As of 2026-08-30, from a clean import:
+The last recorded plan, from a clean import on 2026-08-30, was
+`5 to add, 5 to change, 0 to destroy` — the five APIs M2 needs, and dataset descriptions
+updated in place.
 
-```
-Plan: 5 to add, 5 to change, 0 to destroy.
-```
-
-- **5 to add** — Cloud Run, Scheduler, Artifact Registry, Cloud Build and IAM APIs,
-  which M2 needs and which were never enabled.
-- **5 to change** — descriptions and a `managed_by = terraform` label on each dataset,
-  updated in place.
-- **0 to destroy** — the point. Nothing here would be recreated.
+That number is now stale: this configuration adds Cloud Run, the registry, three service
+accounts, their IAM, and Workload Identity Federation. Replace the line above with the
+real output after the first apply, because the figure that matters is not how many
+resources were added but that **0 are destroyed**. Anything in the destroy column is
+either a mistake or a decision, never a detail.

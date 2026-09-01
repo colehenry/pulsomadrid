@@ -1,0 +1,25 @@
+# Netlify builds the web app from this repository on every push.
+#
+# The API is not built here — it goes to Cloud Run from .github/workflows/ci.yml. This
+# file covers the frontend only.
+
+[build]
+  # A monorepo: without this, Netlify would look for package.json at the repository root
+  # and find nothing. Every path below is relative to this directory.
+  base = "apps/web"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Match CI and the local toolchain. Next 16 requires >= 20.9.
+  NODE_VERSION = "20"
+
+# NEXT_PUBLIC_API_URL is deliberately not set here. It is baked into the client bundle
+# at build time, it differs between production and previews, and it is not known until
+# Terraform has created the Cloud Run service. Set it in the Netlify UI under
+# Site configuration → Environment variables, from `terraform output api_url`.
+
+# Netlify applies its Next.js adapter automatically — App Router, server components and
+# the proxy layer all keep working. Do not pin the adapter version: Netlify updates it
+# per build to track Next.js releases, and pinning is how you end up on an adapter that
+# does not know about the Next version you upgraded to.

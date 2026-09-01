@@ -41,5 +41,11 @@ class Config:
         o.strip() for o in os.getenv("API_CORS_ORIGINS", "http://localhost:3000").split(",")
         if o.strip()))
 
+    # Netlify gives every pull request a deploy preview on a generated subdomain, so
+    # those origins cannot be listed one by one. A regex covers them without opening the
+    # API to any origin at all. Unset means production origins only.
+    cors_origin_regex: str | None = field(
+        default_factory=lambda: os.getenv("API_CORS_ORIGIN_REGEX") or None)
+
     def table(self, dataset: str, name: str) -> str:
         return f"{self.project}.{dataset}.{name}"

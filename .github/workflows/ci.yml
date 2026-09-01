@@ -1,5 +1,8 @@
 # CI runs scripts/check.sh — the same command, not a copy of it.
 #
+# Checks only. Netlify deploys the web app and Railway deploys the services, both from
+# git on push, so there is no deploy job here.
+#
 # The point of calling the script rather than listing ruff/mypy/pytest/eslint/tsc here
 # is that CI and a local run cannot drift: adding a check to the script adds it to CI.
 # All CI does on top is install what the script assumes is already on the machine.
@@ -58,6 +61,7 @@ jobs:
 
       # The production build catches what lint and tsc cannot: a bad next-intl route, a
       # server component using a client-only API, a page that fails to prerender.
+      # Netlify builds the site it serves; this is the gate, not the deploy.
       - name: Build the web app
         working-directory: apps/web
         run: npm run build
