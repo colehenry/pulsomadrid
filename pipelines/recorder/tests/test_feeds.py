@@ -13,9 +13,12 @@ from pathlib import Path
 from pulso_recorder.feeds import (
     MADRID,
     Trip,
+    alerts_look_partial,
     content_hash,
+    diff_alert_versions,
     ended_alert_row,
     header_timestamp,
+    is_partial_snapshot,
     parse_alerts,
     parse_platform,
     parse_trains,
@@ -243,3 +246,58 @@ def test_service_day_is_cut_at_three_in_the_morning():
     assert service_date_for(madrid(26, 59)).isoformat() == "2026-09-01"  # 02:59, still tonight
     assert service_date_for(madrid(27, 0)).isoformat() == "2026-09-02"   # 03:00, new day
     assert service_date_for(madrid(29, 0)).isoformat() == "2026-09-02"   # 05:00, first trains
+
+
+# ------------------------------------------------------------------ partial snapshots
+
+def test_partial_snapshot_is_zero_madrid_after_a_publication_that_had_some():
+    """Measured live: a partial carries 170-215 entities and exactly zero Madrid."""
+    assert is_partial_snapshot(n_madrid=0, n_entities=210, previous_madrid=104) is True
+
+
+def test_a_quiet_network_is_not_a_partial_snapshot():
+    """Zero after zero is the network asleep, and must still be recorded as such."""
+    assert is_partial_snapshot(n_madrid=0, n_entities=0, previous_madrid=0) is False
+    assert is_partial_snapshot(n_madrid=0, n_entities=173, previous_madrid=0) is False
+
+
+def test_a_full_snapshot_is_never_partial():
+    assert is_partial_snapshot(n_madrid=104, n_entities=309, previous_madrid=106) is False
+    assert is_partial_snapshot(n_madrid=1, n_entities=300, previous_madrid=106) is False
+
+
+def test_the_test_is_relative_not_a_count_threshold():
+    """A small snapshot is normal at 06:00; what matters is Madrid vanishing."""
+    assert is_partial_snapshot(n_madrid=12, n_entities=40, previous_madrid=14) is False
+
+
+def test_alerts_naming_none_while_some_are_open_is_disbelieved():
+    """Acting on it would tombstone every open alert and resurrect it seconds later."""
+    assert alerts_look_partial({}, {"AVISO_1": "abc"}) is True
+
+
+def test_alerts_naming_none_when_none_are_open_is_believed():
+    assert alerts_look_partial({}, {}) is False
+
+
+def test_a_genuine_alert_ending_is_still_recorded():
+    """The guard must not swallow a real ending: one of two alerts going away."""
+    observed_at = datetime.fromtimestamp(1788234736, UTC)
+    current = {"AVISO_1": {"alert_id": "AVISO_1", "content_hash": "aaa"}}
+    previous = {"AVISO_1": "aaa", "AVISO_2": "bbb"}
+    assert alerts_look_partial(current, previous) is False
+    rows = diff_alert_versions(current, previous, observed_at)
+    assert [(r["alert_id"], r["version_status"]) for r in rows] == [("AVISO_2", "ended")]
+
+
+def test_unchanged_alerts_write_nothing():
+    observed_at = datetime.fromtimestamp(1788234736, UTC)
+    current = {"AVISO_1": {"alert_id": "AVISO_1", "content_hash": "aaa"}}
+    assert diff_alert_versions(current, {"AVISO_1": "aaa"}, observed_at) == []
+
+
+def test_changed_alert_writes_a_new_version():
+    observed_at = datetime.fromtimestamp(1788234736, UTC)
+    current = {"AVISO_1": {"alert_id": "AVISO_1", "content_hash": "zzz"}}
+    rows = diff_alert_versions(current, {"AVISO_1": "aaa"}, observed_at)
+    assert len(rows) == 1 and rows[0]["content_hash"] == "zzz"

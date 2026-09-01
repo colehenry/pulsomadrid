@@ -363,6 +363,7 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.ops.load_runs` (
   rows_rejected     INT64              OPTIONS(description="Rows that failed validation and went to ops.rejected_rows"),
   error_message     STRING             OPTIONS(description="Failure detail where status is 'failed'"),
   source_timestamp  TIMESTAMP          OPTIONS(description="Feed header timestamp of the last publication in this batch. Distinguishes a feed that is live and empty, which is the network asleep, from a feed that has stopped updating, which is an outage. NULL for sources that are files rather than feeds, which is every source but renfe_gtfs_rt"),
+  partial_publications INT64           OPTIONS(description="Publications in this batch that were refused as incomplete. Renfe serves partial national snapshots from some backends -- a fresh header timestamp and a valid payload with Madrid absent entirely, about one publication in five, measured at 170-215 entities against 270-320 for a full one. They are indistinguishable from the network being asleep once the rows are gone, so the count is recorded here rather than inferred later. NULL for sources that are files rather than feeds"),
 
   load_time         TIMESTAMP NOT NULL OPTIONS(description="When this row was written"),
 

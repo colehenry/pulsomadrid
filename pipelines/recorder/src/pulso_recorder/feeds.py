@@ -297,3 +297,48 @@ def ended_alert_row(alert_id: str, content_hash_value: str, observed_at: datetim
         "source_translations": [], "route_ids": [], "line_ids": [],
         "station_ids": [], "trip_ids": [], "source_payload": None,
     }
+
+
+def is_partial_snapshot(n_madrid: int, n_entities: int, previous_madrid: int) -> bool:
+    """Whether this publication is one of Renfe's incomplete national snapshots.
+
+    Some of Renfe's backends serve a payload with a fresh header timestamp, its own ETag,
+    a valid structure -- and a third of the country missing. Measured live: a full
+    snapshot carries 270-320 entities of which 33-38% are Madrid; a partial carries
+    170-215 of which *exactly zero* are Madrid. The nucleo is dropped whole, never
+    partially, in roughly one publication in five.
+
+    The test is relative rather than a threshold on entity count, because 300 entities is
+    a full snapshot at 19:00 and an impossible one at 06:00 -- any fixed number would
+    drift through the day. Zero Madrid trains when the previous publication had some is a
+    broken snapshot. Zero when the previous one was also zero is the network asleep, which
+    is real and must still be recorded as such.
+    """
+    return n_madrid == 0 and previous_madrid > 0 and n_entities > 0
+
+
+def diff_alert_versions(
+    current: dict[str, dict[str, Any]], previous: dict[str, str], observed_at: datetime,
+) -> list[dict[str, Any]]:
+    """New, changed and ended alert versions, given what we held before.
+
+    A row is written only when an alert appears, when its canonical content changes, or
+    when it leaves the feed. Everything else is the same alert saying the same thing.
+    """
+    rows = [row for alert_id, row in current.items()
+            if previous.get(alert_id) != row["content_hash"]]
+    rows.extend(ended_alert_row(alert_id, content_hash_value, observed_at)
+                for alert_id, content_hash_value in previous.items()
+                if alert_id not in current)
+    return rows
+
+
+def alerts_look_partial(current: dict[str, dict[str, Any]], previous: dict[str, str]) -> bool:
+    """Whether an alerts payload naming no Madrid alert should be disbelieved.
+
+    The same backend failure as is_partial_snapshot, but the cost here is asymmetric:
+    acting on it would tombstone every open alert and resurrect them on the next
+    publication, inventing a disruption that ended and restarted. Losing one sample of an
+    alert that has not changed costs nothing at all.
+    """
+    return not current and bool(previous)

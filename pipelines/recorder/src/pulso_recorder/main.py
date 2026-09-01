@@ -32,7 +32,14 @@ import httpx
 from . import feeds
 from .archive import Archive, madrid_only
 from .config import FEED_URLS, Config
-from .feeds import ended_alert_row, header_timestamp, parse_alerts, parse_trains
+from .feeds import (
+    alerts_look_partial,
+    diff_alert_versions,
+    header_timestamp,
+    is_partial_snapshot,
+    parse_alerts,
+    parse_trains,
+)
 from .trips import TripLookup
 from .writer import Writer
 
@@ -73,6 +80,8 @@ class Recorder:
         self.alert_state: dict[str, str] = {}
         self.last_header: datetime | None = None
         self.publications = 0
+        self.partial_publications = 0
+        self.last_madrid_trains = 0
         self._stopping = False
 
     def start(self) -> None:
@@ -126,11 +135,24 @@ class Recorder:
 
         rows, anomalies = parse_trains(vehicles, updates, self.lookup.trips,
                                        self.lookup.stations, observed_at)
+        n_entities = len((vehicles or {}).get("entity") or [])
+
+        # Renfe serves incomplete national snapshots from some of its backends. The whole
+        # publication is skipped, not just its trains, because the alerts in it come from
+        # the same backend. See feeds.is_partial_snapshot for the measurements.
+        if is_partial_snapshot(len(rows), n_entities, self.last_madrid_trains):
+            self.partial_publications += 1
+            log.warning("%s: partial snapshot — %d entities, 0 of them Madrid, "
+                        "previous publication had %d. Skipped",
+                        observed_at.isoformat(timespec="seconds"), n_entities,
+                        self.last_madrid_trains)
+            return True
+
+        self.last_madrid_trains = len(rows)
         alert_rows = self._alert_rows(alerts, observed_at)
 
         cancelled = sum(1 for r in rows if r.get("schedule_relationship") == "CANCELED")
         stopped = sum(1 for r in rows if r.get("current_status") == "STOPPED_AT")
-        n_entities = len((vehicles or {}).get("entity") or [])
         if not rows and n_entities == 0:
             # A live feed with no entities is the network asleep, not an outage. The
             # header timestamp above is what proves the difference.
@@ -157,11 +179,14 @@ class Recorder:
         if payload is None:
             return []
         current = parse_alerts(payload, observed_at)
-        rows = [row for alert_id, row in current.items()
-                if self.alert_state.get(alert_id) != row["content_hash"]]
-        for alert_id, previous_hash in list(self.alert_state.items()):
-            if alert_id not in current:
-                rows.append(ended_alert_row(alert_id, previous_hash, observed_at))
+
+        if alerts_look_partial(current, self.alert_state):
+            log.warning("alerts payload named no Madrid alert while %d are open — "
+                        "treating as a partial snapshot, not as endings",
+                        len(self.alert_state))
+            return []
+
+        rows = diff_alert_versions(current, self.alert_state, observed_at)
         self.alert_state = {a: r["content_hash"] for a, r in current.items()}
         for row in rows:
             log.info("alert %s %s: %s", row["alert_id"], row["version_status"],
@@ -198,12 +223,14 @@ class Recorder:
                                      or now - last_flush >= self.cfg.flush_seconds):
                 counts = self.writer.flush(
                     load_id=f"{datetime.now(UTC):%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:6]}",
-                    source_timestamp=self.last_header, feed_ok=feed_ok)
+                    source_timestamp=self.last_header, feed_ok=feed_ok,
+                    partial_publications=self.partial_publications)
                 log.info("batch loaded: %d train row(s), %d alert row(s), %d anomal(ies), "
-                         "%d publication(s) since last batch",
+                         "%d publication(s) since last batch, %d partial snapshot(s) skipped",
                          counts["trains"], counts["alerts"], counts["anomalies"],
-                         self.publications)
+                         self.publications, self.partial_publications)
                 self.publications = 0
+                self.partial_publications = 0
                 last_flush = now
 
             if self._stopping or once:

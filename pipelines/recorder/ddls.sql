@@ -143,3 +143,12 @@ ALTER TABLE `pulso-madrid.facts.cercanias_scheduled_stops`
 ALTER TABLE `pulso-madrid.ops.load_runs`
   ADD COLUMN IF NOT EXISTS source_timestamp TIMESTAMP
   OPTIONS(description="Feed header timestamp of the last publication in this batch. Distinguishes a feed that is live and empty, which is the network asleep, from a feed that has stopped updating, which is an outage");
+
+-- Renfe serves incomplete national snapshots from some of its backends: a fresh header
+-- timestamp, a valid payload, and Madrid absent entirely, in roughly one publication in
+-- five. The recorder refuses those, and once the rows are gone a refused publication is
+-- indistinguishable from the network being asleep -- so the count is recorded.
+
+ALTER TABLE `pulso-madrid.ops.load_runs`
+  ADD COLUMN IF NOT EXISTS partial_publications INT64
+  OPTIONS(description="Publications in this batch that were refused as incomplete. Renfe serves partial national snapshots from some backends -- a fresh header timestamp and a valid payload with Madrid absent entirely, measured at 170-215 entities against 270-320 for a full one. NULL for sources that are files rather than feeds");

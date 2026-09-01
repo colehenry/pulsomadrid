@@ -117,7 +117,8 @@ class Writer:
         return job.output_rows or 0
 
     def flush(self, load_id: str, *, source_timestamp: datetime | None,
-              feed_ok: bool, error: str | None = None) -> dict[str, int]:
+              feed_ok: bool, error: str | None = None,
+              partial_publications: int = 0) -> dict[str, int]:
         """Write everything buffered, then record the batch in ops.load_runs.
 
         Buffers are cleared only after the load succeeds. A failed load leaves the rows
@@ -144,7 +145,8 @@ class Writer:
         if not feed_ok:
             status = "failed"
 
-        self._record_run(load_id, started, status, message, counts, source_timestamp)
+        self._record_run(load_id, started, status, message, counts, source_timestamp,
+                         partial_publications)
         return counts
 
     def _load_anomalies(self, load_id: str) -> int:
@@ -161,7 +163,8 @@ class Writer:
         return self._load(table, rows, load_id)
 
     def _record_run(self, load_id: str, started: datetime, status: str, error: str | None,
-                    counts: dict[str, int], source_timestamp: datetime | None) -> None:
+                    counts: dict[str, int], source_timestamp: datetime | None,
+                    partial_publications: int = 0) -> None:
         """One ops.load_runs row per batch.
 
         Written after the fact rather than as a running/finished pair: a batch takes about
@@ -171,6 +174,10 @@ class Writer:
         source_timestamp is what separates the two ways of loading zero rows. The network
         sleeps for about five hours a night and the feed stays live and empty throughout,
         carrying a fresh header timestamp. An outage carries a stale one, or none.
+
+        partial_publications separates a third way: Renfe serving an incomplete snapshot
+        with Madrid missing entirely. Those look exactly like the network being asleep
+        from inside this table, which is why the count is recorded rather than inferred.
         """
         table = self._cfg.table(self._cfg.ds_ops, "load_runs")
         loaded = counts["trains"] + counts["alerts"]
@@ -178,10 +185,10 @@ class Writer:
             self._client.query(
                 f"""INSERT INTO `{table}`
                       (load_id, source, started_at, finished_at, status, source_url,
-                       source_timestamp, rows_read, rows_loaded, rows_rejected,
-                       error_message, load_time)
+                       source_timestamp, partial_publications, rows_read, rows_loaded,
+                       rows_rejected, error_message, load_time)
                     VALUES (@lid, @source, @started, CURRENT_TIMESTAMP(), @status,
-                            'https://gtfsrt.renfe.com/', @src_ts, @read, @loaded,
+                            'https://gtfsrt.renfe.com/', @src_ts, @partial, @read, @loaded,
                             @rejected, @err, CURRENT_TIMESTAMP())""",
                 job_config=bigquery.QueryJobConfig(query_parameters=[
                     bigquery.ScalarQueryParameter("lid", "STRING", load_id),
@@ -189,6 +196,7 @@ class Writer:
                     bigquery.ScalarQueryParameter("started", "TIMESTAMP", started),
                     bigquery.ScalarQueryParameter("status", "STRING", status),
                     bigquery.ScalarQueryParameter("src_ts", "TIMESTAMP", source_timestamp),
+                    bigquery.ScalarQueryParameter("partial", "INT64", partial_publications),
                     bigquery.ScalarQueryParameter("read", "INT64", loaded),
                     bigquery.ScalarQueryParameter("loaded", "INT64", loaded),
                     bigquery.ScalarQueryParameter("rejected", "INT64", counts["anomalies"]),
