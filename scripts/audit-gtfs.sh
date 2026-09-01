@@ -49,6 +49,36 @@ for spec in \
   printf '  %-42s %10s\n' "$d.$t" "$n"
 done
 
+section "Referential integrity across the warehouse (small BigQuery queries)"
+# The DuckDB checks below see one run's Parquet, where trips and patterns are consistent
+# by construction. They cannot see a fact row loaded weeks ago pointing at a dimension
+# row the current feed dropped — which is exactly what happened when Renfe republished
+# with 95 stopping patterns instead of 119 and left 1,640 trips orphaned. This section
+# looks at the accumulated warehouse instead, and is the only part of this script that
+# is not free: a few MB of partitioned scan.
+warehouse_bad=0
+while IFS=, read -r label n; do
+  [ -z "$label" ] && continue
+  if [ "$n" = "0" ]; then printf '  OK    %-52s %s\n' "$label" "$n"
+  else printf '  FAIL  %-52s %s\n' "$label" "$n"; warehouse_bad=1; fi
+done < <(bq query --nouse_legacy_sql --format=csv --quiet <<'SQL' 2>/dev/null | tail -n +2
+SELECT 'trips with a pattern not in dimensions' AS label, COUNT(*) AS n
+FROM `pulso-madrid.facts.cercanias_scheduled_trips` t
+LEFT JOIN `pulso-madrid.dimensions.cercanias_stop_patterns` p USING (stop_pattern_id)
+WHERE p.stop_pattern_id IS NULL
+UNION ALL
+SELECT 'trips on a line not in dimensions', COUNT(*)
+FROM `pulso-madrid.facts.cercanias_scheduled_trips` t
+LEFT JOIN `pulso-madrid.dimensions.cercanias_lines` l USING (line_id)
+WHERE l.line_id IS NULL
+UNION ALL
+SELECT 'stops at a station not in dimensions', COUNT(*)
+FROM `pulso-madrid.facts.cercanias_scheduled_stops` s
+LEFT JOIN `pulso-madrid.dimensions.cercanias_stations` st ON st.station_id = s.station_id
+WHERE st.station_id IS NULL
+SQL
+)
+
 section "Integrity and content checks (DuckDB over the loaded Parquet)"
 uv --directory pipelines/gtfs run python - "$PARQUET" <<'PY'
 import sys, duckdb

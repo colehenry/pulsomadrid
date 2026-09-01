@@ -207,6 +207,8 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_lines` (
   color_hex   STRING             OPTIONS(description="Line colour, 6-digit hex. From CRTM where the station join succeeded, otherwise Renfe"),
   n_patterns  INT64              OPTIONS(description="Count of distinct stopping patterns on this line"),
 
+  active     BOOL               OPTIONS(description="True if this row is present in the most recent feed. Rows are never deleted: a pattern that ran last month is a fact about what ran, and the dimension is everything ever seen rather than only what runs today. On a row where active is false, every feed-relative column is as of load_time"),
+
   load_id     STRING    NOT NULL OPTIONS(description="Identifier of the pipeline run that wrote this row"),
   load_time   TIMESTAMP NOT NULL OPTIONS(description="When this row was written"),
 
@@ -227,6 +229,8 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_stations` (
   crtm_match_distance_m FLOAT64    OPTIONS(description="Metres between the Renfe and CRTM coordinates for this station. Renfe and CRTM use different ids and spellings, so matches are made on normalised name first and nearest coordinate second; this records how good the match was. Worst is 119 m. NULL where unmatched"),
   line_ids      ARRAY<STRING>      OPTIONS(description="Lines that call at this station"),
 
+  active     BOOL               OPTIONS(description="True if this row is present in the most recent feed. Rows are never deleted: a pattern that ran last month is a fact about what ran, and the dimension is everything ever seen rather than only what runs today. On a row where active is false, every feed-relative column is as of load_time"),
+
   load_id       STRING    NOT NULL OPTIONS(description="Identifier of the pipeline run that wrote this row"),
   load_time     TIMESTAMP NOT NULL OPTIONS(description="When this row was written"),
 
@@ -242,6 +246,8 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_line_shapes` (
   geometry   GEOGRAPHY          OPTIONS(description="The route as a LINESTRING in WGS84, points ordered by Renfe's shape_pt_sequence"),
   n_points   INT64              OPTIONS(description="Number of coordinate pairs in the line. Shapes with fewer than 2 points are dropped, since they cannot be drawn"),
 
+  active     BOOL               OPTIONS(description="True if this row is present in the most recent feed. Rows are never deleted: a pattern that ran last month is a fact about what ran, and the dimension is everything ever seen rather than only what runs today. On a row where active is false, every feed-relative column is as of load_time"),
+
   load_id    STRING    NOT NULL OPTIONS(description="Identifier of the pipeline run that wrote this row"),
   load_time  TIMESTAMP NOT NULL OPTIONS(description="When this row was written"),
 
@@ -252,7 +258,7 @@ CLUSTER BY line_id;
 
 -- One row per distinct ordered list of stations. About 119 rows for Madrid.
 CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_stop_patterns` (
-  stop_pattern_id   STRING    NOT NULL OPTIONS(description="First 12 hex characters of the SHA256 of the ordered station_id list. The same list of stations always produces the same id, including across feed republishes"),
+  stop_pattern_id   STRING    NOT NULL OPTIONS(description="First 12 hex characters of the SHA256 of line_id and the ordered station_id list, joined as 'line:a>b>c'. The same line and stations always produce the same id, including across feed republishes. The line is part of the input on purpose: two lines running an identical sequence of stops are different services to a passenger"),
   line_id           STRING    NOT NULL OPTIONS(description="Line these trips run on, e.g. 'C5'"),
   direction_towards_station_id STRING      OPTIONS(description="The terminus this pattern heads towards, as station_id -- what a platform sign means by 'towards Humanes'. Taken from the last station of the full-length pattern running the same way along the line. Not the same as destination_station_id, which is where THIS pattern actually stops: a C5 terminating at Fuenlabrada is still heading towards Humanes"),
 
@@ -272,6 +278,8 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.dimensions.cercanias_stop_patterns` (
   is_full_length    BOOL               OPTIONS(description="True where this is the longest pattern on its line and direction, which is the baseline used to compute skipped stations"),
   trip_count        INT64              OPTIONS(description="Trips using this pattern in the current feed"),
   baseline_pattern_id STRING           OPTIONS(description="The full-length pattern that skipped was measured against. NULL where this pattern calls at a station the full-length one does not, meaning it runs a different physical alignment and skipped cannot be computed. C2 is the case in point: 280 trips run direct to Chamartin via Fuente de la Mora instead of the southern loop through Atocha"),
+
+  active     BOOL               OPTIONS(description="True if this row is present in the most recent feed. Rows are never deleted: a pattern that ran last month is a fact about what ran, and the dimension is everything ever seen rather than only what runs today. On a row where active is false, every feed-relative column is as of load_time"),
 
   load_id           STRING    NOT NULL OPTIONS(description="Identifier of the pipeline run that wrote this row"),
   load_time         TIMESTAMP NOT NULL OPTIONS(description="When this row was written"),

@@ -29,11 +29,12 @@ RAW_TABLES = {
     "raw_crtm_gtfs_stops": "crtm_gtfs_stops",
     "raw_crtm_gtfs_routes": "crtm_gtfs_routes",
 }
+# parquet name -> (table name, natural key). Merged on that key rather than truncated.
 DIMENSION_TABLES = {
-    "cercanias_stations": "cercanias_stations",
-    "cercanias_lines": "cercanias_lines",
-    "cercanias_stop_patterns": "cercanias_stop_patterns",
-    "cercanias_line_shapes": "cercanias_line_shapes",
+    "cercanias_stations": ("cercanias_stations", "station_id"),
+    "cercanias_lines": ("cercanias_lines", "line_id"),
+    "cercanias_stop_patterns": ("cercanias_stop_patterns", "stop_pattern_id"),
+    "cercanias_line_shapes": ("cercanias_line_shapes", "shape_id"),
 }
 OPS_TABLES = {"rejected_rows": "rejected_rows"}
 FACT_TABLES = {
@@ -74,6 +75,49 @@ def _load(client: bigquery.Client, path: Path, table: str, mode: str) -> int:
     return job.output_rows or 0
 
 
+def _merge_dimension(client: bigquery.Client, path: Path, target: str, natural_key: str) -> int:
+    """Load one dimension by merging on its natural key, never by truncating.
+
+    Truncate-and-replace kept only what the current feed contained, which quietly broke
+    every fact row that referenced something the feed had dropped: when Renfe republished
+    with 95 stopping patterns instead of 119, 1,640 already-loaded trips were left
+    pointing at patterns that no longer existed. Nothing errored and the row counts
+    stayed plausible.
+
+    Keeping the rows is also the more truthful model. A stopping pattern that ran last
+    month is a fact about what ran; the ids are hashes of the line and its ordered stops,
+    so they stay stable across republishes and an old row keeps describing exactly what
+    it always described.
+
+    `active` distinguishes the two: every row is marked inactive first, then the merge
+    marks whatever this feed contains active again. On an inactive row, `load_time` is
+    the last time the feed contained it.
+    """
+    staging = f"{target}__staging"
+    _load(client, path, staging, bigquery.WriteDisposition.WRITE_TRUNCATE)
+
+    columns = [f.name for f in client.get_table(target).schema]
+    assignments = ", ".join(f"T.{c} = S.{c}" for c in columns)
+    names = ", ".join(columns)
+    values = ", ".join(f"S.{c}" for c in columns)
+
+    client.query(f"UPDATE `{target}` SET active = FALSE WHERE TRUE").result()
+    client.query(f"""
+        MERGE `{target}` T
+        USING `{staging}` S
+        ON T.{natural_key} = S.{natural_key}
+        WHEN MATCHED THEN UPDATE SET {assignments}
+        WHEN NOT MATCHED THEN INSERT ({names}) VALUES ({values})
+    """).result()
+    client.delete_table(staging, not_found_ok=True)
+
+    n = client.get_table(target).num_rows
+    inactive = next(iter(client.query(
+        f"SELECT COUNTIF(NOT active) FROM `{target}`").result()))[0]
+    log.info("merged %-45s %8d rows (%d not in this feed)", target, n, inactive)
+    return n
+
+
 def load_all(cfg: Config, paths: dict[str, Path], client: bigquery.Client | None = None) -> dict[str, int]:
     client = client or bigquery.Client(project=cfg.project, credentials=credentials())
     counts: dict[str, int] = {}
@@ -82,10 +126,10 @@ def load_all(cfg: Config, paths: dict[str, Path], client: bigquery.Client | None
         if key in paths:
             counts[f"raw.{tbl}"] = _load(client, paths[key], cfg.table(cfg.ds_raw, tbl),
                                          bigquery.WriteDisposition.WRITE_TRUNCATE)
-    for key, tbl in DIMENSION_TABLES.items():
+    for key, (tbl, natural_key) in DIMENSION_TABLES.items():
         if key in paths:
-            counts[f"dimensions.{tbl}"] = _load(client, paths[key], cfg.table(cfg.ds_dimensions, tbl),
-                                                bigquery.WriteDisposition.WRITE_TRUNCATE)
+            counts[f"dimensions.{tbl}"] = _merge_dimension(
+                client, paths[key], cfg.table(cfg.ds_dimensions, tbl), natural_key)
 
     for key, tbl in OPS_TABLES.items():
         if key in paths:

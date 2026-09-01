@@ -363,7 +363,7 @@ def build_outputs(con: duckdb.DuckDBPyConnection, load_id: str, sha: str) -> Non
                (SELECT list_sort(list_distinct(list(t.line_id)))
                   FROM w_stop_times st JOIN w_trips t ON t.trip_id = st.trip_id
                  WHERE st.station_id = s.station_id) AS line_ids,
-               '{load_id}' AS load_id, {now} AS load_time
+               TRUE AS active, '{load_id}' AS load_id, {now} AS load_time
         FROM w_stops s
         LEFT JOIN w_display_override o ON o.station_id = s.station_id
         LEFT JOIN w_station_join j ON j.renfe_stop_id = s.station_id
@@ -383,7 +383,7 @@ def build_outputs(con: duckdb.DuckDBPyConnection, load_id: str, sha: str) -> Non
                ANY_VALUE(r.long_name) AS line_name,
                COALESCE(ANY_VALUE(cr.color_hex), ANY_VALUE(r.color_hex)) AS color_hex,
                (SELECT COUNT(*) FROM w_pattern p WHERE p.line_id = r.line_id) AS n_patterns,
-               '{load_id}' AS load_id, {now} AS load_time
+               TRUE AS active, '{load_id}' AS load_id, {now} AS load_time
         FROM w_live_routes r
         LEFT JOIN (SELECT trim(route_short_name) AS line_id, trim(route_color) AS color_hex
                      FROM raw_crtm_gtfs_routes) cr ON cr.line_id = r.line_id
@@ -410,7 +410,7 @@ def build_outputs(con: duckdb.DuckDBPyConnection, load_id: str, sha: str) -> Non
                'LINESTRING(' || string_agg(p.lon || ' ' || p.lat, ', ' ORDER BY p.seq) || ')'
                    AS geometry,
                COUNT(*) AS n_points,
-               '{load_id}' AS load_id, {now} AS load_time
+               TRUE AS active, '{load_id}' AS load_id, {now} AS load_time
         FROM pts p GROUP BY p.shape_id
         HAVING COUNT(*) >= 2
     """)
@@ -437,7 +437,7 @@ def build_outputs(con: duckdb.DuckDBPyConnection, load_id: str, sha: str) -> Non
                p.n_stops, st.origin_station_id, st.destination_station_id,
                (f.full_pattern_id = p.stop_pattern_id) AS is_full_length,
                p.trip_count, b.baseline_pattern_id,
-               '{load_id}' AS load_id, {now} AS load_time
+               TRUE AS active, '{load_id}' AS load_id, {now} AS load_time
         FROM w_pattern p
         JOIN stations st ON st.stop_pattern_id = p.stop_pattern_id
         LEFT JOIN skipped sk ON sk.stop_pattern_id = p.stop_pattern_id
