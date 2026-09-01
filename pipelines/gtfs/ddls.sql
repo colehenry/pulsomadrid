@@ -316,7 +316,8 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.facts.cercanias_scheduled_trips` (
   PRIMARY KEY (trip_id) NOT ENFORCED
 )
 PARTITION BY service_date
-CLUSTER BY line_id, train_number;
+CLUSTER BY line_id, train_number
+OPTIONS(require_partition_filter = TRUE);
 
 
 -- One row per station a train stops at. About 550,000 rows per feed.
@@ -340,7 +341,8 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.facts.cercanias_scheduled_stops` (
   PRIMARY KEY (trip_id, stop_number) NOT ENFORCED
 )
 PARTITION BY service_date
-CLUSTER BY station_id, trip_id;
+CLUSTER BY station_id, trip_id
+OPTIONS(require_partition_filter = TRUE);
 
 
 -- ============================================================================
@@ -360,6 +362,7 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.ops.load_runs` (
   rows_loaded       INT64              OPTIONS(description="Rows written to raw"),
   rows_rejected     INT64              OPTIONS(description="Rows that failed validation and went to ops.rejected_rows"),
   error_message     STRING             OPTIONS(description="Failure detail where status is 'failed'"),
+  source_timestamp  TIMESTAMP          OPTIONS(description="Feed header timestamp of the last publication in this batch. Distinguishes a feed that is live and empty, which is the network asleep, from a feed that has stopped updating, which is an outage. NULL for sources that are files rather than feeds, which is every source but renfe_gtfs_rt"),
 
   load_time         TIMESTAMP NOT NULL OPTIONS(description="When this row was written"),
 

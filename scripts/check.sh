@@ -18,6 +18,12 @@ if [ -f pipelines/gtfs/pyproject.toml ]; then
   step "gtfs pytest" bash -c 'cd pipelines/gtfs && uv run pytest -q'
 else warn "pipelines/gtfs not scaffolded yet"; fi
 
+if [ -f pipelines/recorder/pyproject.toml ]; then
+  step "recorder ruff"   bash -c 'cd pipelines/recorder && uv run ruff check src tests'
+  step "recorder mypy"   bash -c 'cd pipelines/recorder && uv run mypy .'
+  step "recorder pytest" bash -c 'cd pipelines/recorder && uv run pytest -q'
+else warn "pipelines/recorder not scaffolded yet"; fi
+
 if [ -f apps/web/package.json ]; then
   step "eslint" bash -c 'cd apps/web && npm run lint'
   step "tsc"    bash -c 'cd apps/web && npx tsc --noEmit'

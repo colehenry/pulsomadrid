@@ -1,0 +1,552 @@
+{
+ "header": {
+  "gtfsRealtimeVersion": "2.0",
+  "timestamp": "1788234755"
+ },
+ "entity": [
+  {
+   "id": "TUUPDATE_1042M35973C2",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M35973C2",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 540,
+       "time": "1788235440"
+      },
+      "stopId": "98003"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 540
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M20709C5",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M20709C5",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788236160"
+      },
+      "stopId": "35010"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M19805C1",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M19805C1",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788236040"
+      },
+      "stopId": "98304"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M19529C5",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M19529C5",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788235680"
+      },
+      "stopId": "35002"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M78903C8b",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M78903C8b",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788236220"
+      },
+      "stopId": "97201"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M78902C8b",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M78902C8b",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788235680"
+      },
+      "stopId": "12004"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M19800C1",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M19800C1",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 120,
+       "time": "1788234960"
+      },
+      "stopId": "98003"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 120
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M19803C1",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M19803C1",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 120,
+       "time": "1788235260"
+      },
+      "stopId": "98304"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 120
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M19802C1",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M19802C1",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788236640"
+      },
+      "stopId": "98003"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M20005C3",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M20005C3",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 300,
+       "time": "1788235020"
+      },
+      "stopId": "60104"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 300
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21200C10",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21200C10",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 480,
+       "time": "1788236040"
+      },
+      "stopId": "18002"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 480
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21001C8a",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21001C8a",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788235380"
+      },
+      "stopId": "97201"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21000C8a",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21000C8a",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 120,
+       "time": "1788234900"
+      },
+      "stopId": "10201"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 120
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21804C7",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21804C7",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788235980"
+      },
+      "stopId": "10001"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21605C2",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21605C2",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788235380"
+      },
+      "stopId": "70105"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21802C7",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21802C7",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788236640"
+      },
+      "stopId": "18002"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21603C2",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21603C2",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 60,
+       "time": "1788234960"
+      },
+      "stopId": "70112"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 60
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21800C7",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21800C7",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 180,
+       "time": "1788234960"
+      },
+      "stopId": "18002"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 180
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M20710C5",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M20710C5",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788236520"
+      },
+      "stopId": "35606"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M21601C2",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M21601C2",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 60,
+       "time": "1788234840"
+      },
+      "stopId": "70002"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_ACCESSIBLE"
+    },
+    "delay": 60
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M35975C2",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M35975C2",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788235860"
+      },
+      "stopId": "70105"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M20207C4a",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M20207C4a",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 60,
+       "time": "1788235200"
+      },
+      "stopId": "17000"
+     }
+    ],
+    "delay": 60
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M20405C4b",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M20405C4b",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 240,
+       "time": "1788234900"
+      },
+      "stopId": "17003"
+     }
+    ],
+    "delay": 240
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M20008C3",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M20008C3",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788236160"
+      },
+      "stopId": "18002"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  },
+  {
+   "id": "TUUPDATE_1042M20206C4",
+   "tripUpdate": {
+    "trip": {
+     "tripId": "1042M20206C4",
+     "scheduleRelationship": "SCHEDULED"
+    },
+    "stopTimeUpdate": [
+     {
+      "arrival": {
+       "delay": 0,
+       "time": "1788235680"
+      },
+      "stopId": "37010"
+     }
+    ],
+    "vehicle": {
+     "wheelchairAccessible": "WHEELCHAIR_INACCESSIBLE"
+    },
+    "delay": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,824 @@
+{
+ "header": {
+  "gtfsRealtimeVersion": "2.0",
+  "timestamp": "1788234736"
+ },
+ "entity": [
+  {
+   "id": "AVISO_510970",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1788206280"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0031C2"
+     },
+     {
+      "routeId": "10T0020C2"
+     },
+     {
+      "routeId": "10T0037C2"
+     },
+     {
+      "routeId": "10T0038C2"
+     },
+     {
+      "routeId": "10T0049C2"
+     },
+     {
+      "routeId": "10T0005C2"
+     },
+     {
+      "routeId": "10T0082C2"
+     },
+     {
+      "routeId": "10T0084C2"
+     },
+     {
+      "routeId": "10T0032C2"
+     },
+     {
+      "routeId": "10T0081C2"
+     },
+     {
+      "routeId": "10T0006C2"
+     },
+     {
+      "routeId": "10T0019C2"
+     },
+     {
+      "routeId": "10T0083C2"
+     },
+     {
+      "routeId": "10T0050C2"
+     },
+     {
+      "routeId": "10T0042C8"
+     },
+     {
+      "routeId": "10T0044C8"
+     },
+     {
+      "routeId": "10T0046C8"
+     },
+     {
+      "routeId": "10T0090C8"
+     },
+     {
+      "routeId": "10T0040C8"
+     },
+     {
+      "routeId": "10T0041C8"
+     },
+     {
+      "routeId": "10T0089C8"
+     },
+     {
+      "routeId": "10T0043C8"
+     },
+     {
+      "routeId": "10T0045C8"
+     },
+     {
+      "routeId": "10T0069C8"
+     },
+     {
+      "routeId": "10T0039C8"
+     },
+     {
+      "routeId": "10T0070C8"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC2#MadC8 Debido a una vería en la infraestructura entre las estaciones de Atocha y Vallecas. Se suspende la circulación, entre las estaciones de Atocha y Vicálvaro, en ambos sentidos, en trenes con destino Guadalajara. Los trenes con destino y origen Guadalajara circulan desviados por la estación de Fuente de la Mora.",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "AVISO_510984",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1788201540"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0099C3"
+     },
+     {
+      "routeId": "10T0033C3"
+     },
+     {
+      "routeId": "10T0100C3"
+     },
+     {
+      "routeId": "10T0029C3"
+     },
+     {
+      "routeId": "10T0007C3"
+     },
+     {
+      "routeId": "10T0118C3"
+     },
+     {
+      "routeId": "10T0030C3"
+     },
+     {
+      "routeId": "10T0034C3"
+     },
+     {
+      "routeId": "10T0117C3"
+     },
+     {
+      "routeId": "10T0008C3"
+     },
+     {
+      "routeId": "10T0014C4a"
+     },
+     {
+      "routeId": "10T0013C4a"
+     },
+     {
+      "routeId": "10T0016C4b"
+     },
+     {
+      "routeId": "10T0015C4b"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC3#MadC4 Debido a un reajuste en el servicio, los trenes están sufriendo demoras, detenciones y pueden ver variado su recorrido habitual.",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "AVISO_510965",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1788199860"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0099C3"
+     },
+     {
+      "routeId": "10T0033C3"
+     },
+     {
+      "routeId": "10T0100C3"
+     },
+     {
+      "routeId": "10T0029C3"
+     },
+     {
+      "routeId": "10T0007C3"
+     },
+     {
+      "routeId": "10T0118C3"
+     },
+     {
+      "routeId": "10T0030C3"
+     },
+     {
+      "routeId": "10T0034C3"
+     },
+     {
+      "routeId": "10T0117C3"
+     },
+     {
+      "routeId": "10T0008C3"
+     },
+     {
+      "routeId": "10T0011C4"
+     },
+     {
+      "routeId": "10T0068C4"
+     },
+     {
+      "routeId": "10T0095C4"
+     },
+     {
+      "routeId": "10T0067C4"
+     },
+     {
+      "routeId": "10T0012C4"
+     },
+     {
+      "routeId": "10T0096C4"
+     },
+     {
+      "routeId": "10T0014C4a"
+     },
+     {
+      "routeId": "10T0013C4a"
+     },
+     {
+      "routeId": "10T0016C4b"
+     },
+     {
+      "routeId": "10T0015C4b"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC3 #MadC4 Debido a una avería de un tren, ya subsanada, en la estación de Villaverde Bajo, los trenes irán recuperando sus frecuencias de paso progresivamente.",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "AVISO_510948",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1788198180"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0031C2"
+     },
+     {
+      "routeId": "10T0020C2"
+     },
+     {
+      "routeId": "10T0037C2"
+     },
+     {
+      "routeId": "10T0038C2"
+     },
+     {
+      "routeId": "10T0049C2"
+     },
+     {
+      "routeId": "10T0005C2"
+     },
+     {
+      "routeId": "10T0082C2"
+     },
+     {
+      "routeId": "10T0084C2"
+     },
+     {
+      "routeId": "10T0032C2"
+     },
+     {
+      "routeId": "10T0081C2"
+     },
+     {
+      "routeId": "10T0006C2"
+     },
+     {
+      "routeId": "10T0019C2"
+     },
+     {
+      "routeId": "10T0083C2"
+     },
+     {
+      "routeId": "10T0050C2"
+     },
+     {
+      "routeId": "10T0053C7"
+     },
+     {
+      "routeId": "10T0079C7"
+     },
+     {
+      "routeId": "10T0057C7"
+     },
+     {
+      "routeId": "10T0059C7"
+     },
+     {
+      "routeId": "10T0080C7"
+     },
+     {
+      "routeId": "10T0060C7"
+     },
+     {
+      "routeId": "10T0073C7"
+     },
+     {
+      "routeId": "10T0051C7"
+     },
+     {
+      "routeId": "10T0054C7"
+     },
+     {
+      "routeId": "10T0058C7"
+     },
+     {
+      "routeId": "10T0074C7"
+     },
+     {
+      "routeId": "10T0052C7"
+     },
+     {
+      "routeId": "10T0042C8"
+     },
+     {
+      "routeId": "10T0044C8"
+     },
+     {
+      "routeId": "10T0046C8"
+     },
+     {
+      "routeId": "10T0090C8"
+     },
+     {
+      "routeId": "10T0040C8"
+     },
+     {
+      "routeId": "10T0041C8"
+     },
+     {
+      "routeId": "10T0089C8"
+     },
+     {
+      "routeId": "10T0043C8"
+     },
+     {
+      "routeId": "10T0045C8"
+     },
+     {
+      "routeId": "10T0069C8"
+     },
+     {
+      "routeId": "10T0039C8"
+     },
+     {
+      "routeId": "10T0070C8"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC2 #MadC7 #MadC8 Debido a una avería en la infraestructura entre las estaciones de Atocha y Vallecas. Los trenes están sufriendo demoras, detenciones y pueden ver variado su recorrido habitual.\r\n\r\n",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "AVISO_509501",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1787647980"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0099C3"
+     },
+     {
+      "routeId": "10T0033C3"
+     },
+     {
+      "routeId": "10T0100C3"
+     },
+     {
+      "routeId": "10T0029C3"
+     },
+     {
+      "routeId": "10T0007C3"
+     },
+     {
+      "routeId": "10T0118C3"
+     },
+     {
+      "routeId": "10T0030C3"
+     },
+     {
+      "routeId": "10T0034C3"
+     },
+     {
+      "routeId": "10T0117C3"
+     },
+     {
+      "routeId": "10T0008C3"
+     },
+     {
+      "routeId": "10T0014C4a"
+     },
+     {
+      "routeId": "10T0013C4a"
+     },
+     {
+      "routeId": "10T0016C4b"
+     },
+     {
+      "routeId": "10T0015C4b"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC3 #MadC4 Por obras de mejora en la infraestructura, el túnel de Sol quedará sin servicio durante los fines de semana del 29-30 de agosto y 5-6 de septiembre. Además, la estación de Sol permanecerá cerrada.",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "AVISO_508409",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1787044800"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0042C8"
+     },
+     {
+      "routeId": "10T0044C8"
+     },
+     {
+      "routeId": "10T0046C8"
+     },
+     {
+      "routeId": "10T0090C8"
+     },
+     {
+      "routeId": "10T0040C8"
+     },
+     {
+      "routeId": "10T0041C8"
+     },
+     {
+      "routeId": "10T0089C8"
+     },
+     {
+      "routeId": "10T0043C8"
+     },
+     {
+      "routeId": "10T0045C8"
+     },
+     {
+      "routeId": "10T0069C8"
+     },
+     {
+      "routeId": "10T0039C8"
+     },
+     {
+      "routeId": "10T0070C8"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC8 Por obras de mejora en la infraestructura, del 22 de agosto al 5 de septiembre, los trenes no prestan servicio entre Cercedilla y Los Molinos. Se dispone de un servicio especial de autobuses entre estas estaciones. ",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "AVISO_483553",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1774611420"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0111C9"
+     },
+     {
+      "routeId": "10T0114C9"
+     },
+     {
+      "routeId": "10T0025C9"
+     },
+     {
+      "routeId": "10T0112C9"
+     },
+     {
+      "routeId": "10T0026C9"
+     },
+     {
+      "routeId": "10T0113C9"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC9 Por obras de reforma integral en la línea C-9, se encuentra suspendido el servicio de trenes entre las estaciones de Cercedilla-Puerto de Navacerrada-Los Cotos. Se ha establecido un servicio especial de autobuses con reserva de plaza.",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "AVISO_467462",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1765528080"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0042C8"
+     },
+     {
+      "routeId": "10T0044C8"
+     },
+     {
+      "routeId": "10T0046C8"
+     },
+     {
+      "routeId": "10T0090C8"
+     },
+     {
+      "routeId": "10T0040C8"
+     },
+     {
+      "routeId": "10T0041C8"
+     },
+     {
+      "routeId": "10T0089C8"
+     },
+     {
+      "routeId": "10T0043C8"
+     },
+     {
+      "routeId": "10T0045C8"
+     },
+     {
+      "routeId": "10T0069C8"
+     },
+     {
+      "routeId": "10T0039C8"
+     },
+     {
+      "routeId": "10T0070C8"
+     },
+     {
+      "routeId": "10T0111C9"
+     },
+     {
+      "routeId": "10T0114C9"
+     },
+     {
+      "routeId": "10T0025C9"
+     },
+     {
+      "routeId": "10T0112C9"
+     },
+     {
+      "routeId": "10T0026C9"
+     },
+     {
+      "routeId": "10T0113C9"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "#MadC9 Debido a las obras que se están realizando en la línea C-9, los aseos públicos de la estación de Cercedilla permanecen temporalmente inoperativos. ",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "INFO_510822",
+   "alert": {
+    "activePeriod": [
+     {
+      "start": "1788175380"
+     }
+    ],
+    "informedEntity": [
+     {
+      "routeId": "10T0031C2"
+     },
+     {
+      "routeId": "10T0020C2"
+     },
+     {
+      "routeId": "10T0037C2"
+     },
+     {
+      "routeId": "10T0038C2"
+     },
+     {
+      "routeId": "10T0049C2"
+     },
+     {
+      "routeId": "10T0005C2"
+     },
+     {
+      "routeId": "10T0082C2"
+     },
+     {
+      "routeId": "10T0084C2"
+     },
+     {
+      "routeId": "10T0032C2"
+     },
+     {
+      "routeId": "10T0081C2"
+     },
+     {
+      "routeId": "10T0006C2"
+     },
+     {
+      "routeId": "10T0019C2"
+     },
+     {
+      "routeId": "10T0083C2"
+     },
+     {
+      "routeId": "10T0050C2"
+     },
+     {
+      "routeId": "10T0099C3"
+     },
+     {
+      "routeId": "10T0033C3"
+     },
+     {
+      "routeId": "10T0100C3"
+     },
+     {
+      "routeId": "10T0029C3"
+     },
+     {
+      "routeId": "10T0007C3"
+     },
+     {
+      "routeId": "10T0118C3"
+     },
+     {
+      "routeId": "10T0030C3"
+     },
+     {
+      "routeId": "10T0034C3"
+     },
+     {
+      "routeId": "10T0117C3"
+     },
+     {
+      "routeId": "10T0008C3"
+     },
+     {
+      "routeId": "10T0014C4a"
+     },
+     {
+      "routeId": "10T0013C4a"
+     },
+     {
+      "routeId": "10T0016C4b"
+     },
+     {
+      "routeId": "10T0015C4b"
+     },
+     {
+      "routeId": "10T0053C7"
+     },
+     {
+      "routeId": "10T0079C7"
+     },
+     {
+      "routeId": "10T0057C7"
+     },
+     {
+      "routeId": "10T0059C7"
+     },
+     {
+      "routeId": "10T0080C7"
+     },
+     {
+      "routeId": "10T0060C7"
+     },
+     {
+      "routeId": "10T0073C7"
+     },
+     {
+      "routeId": "10T0051C7"
+     },
+     {
+      "routeId": "10T0054C7"
+     },
+     {
+      "routeId": "10T0058C7"
+     },
+     {
+      "routeId": "10T0074C7"
+     },
+     {
+      "routeId": "10T0052C7"
+     },
+     {
+      "routeId": "10T0042C8"
+     },
+     {
+      "routeId": "10T0044C8"
+     },
+     {
+      "routeId": "10T0046C8"
+     },
+     {
+      "routeId": "10T0090C8"
+     },
+     {
+      "routeId": "10T0040C8"
+     },
+     {
+      "routeId": "10T0041C8"
+     },
+     {
+      "routeId": "10T0089C8"
+     },
+     {
+      "routeId": "10T0043C8"
+     },
+     {
+      "routeId": "10T0045C8"
+     },
+     {
+      "routeId": "10T0069C8"
+     },
+     {
+      "routeId": "10T0039C8"
+     },
+     {
+      "routeId": "10T0070C8"
+     },
+     {
+      "routeId": "10T0077C10"
+     },
+     {
+      "routeId": "10T0075C10"
+     },
+     {
+      "routeId": "10T0063C10"
+     },
+     {
+      "routeId": "10T0071C10"
+     },
+     {
+      "routeId": "10T0004C10"
+     },
+     {
+      "routeId": "10T0093C10"
+     },
+     {
+      "routeId": "10T0078C10"
+     },
+     {
+      "routeId": "10T0064C10"
+     },
+     {
+      "routeId": "10T0076C10"
+     },
+     {
+      "routeId": "10T0072C10"
+     },
+     {
+      "routeId": "10T0094C10"
+     },
+     {
+      "routeId": "10T0003C10"
+     }
+    ],
+    "descriptionText": {
+     "translation": [
+      {
+       "text": "Ascensor de la estación Nuevos Ministerios, con acceso a vía 4 con dirección Príncipe Pío y Villalba, se encuentra fuera de servicio.",
+       "language": "es"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

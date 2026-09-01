@@ -144,10 +144,26 @@ def load_all(cfg: Config, paths: dict[str, Path], client: bigquery.Client | None
         target = cfg.table(cfg.ds_facts, tbl)
         staging = f"{target}__staging"
         _load(client, paths[key], staging, bigquery.WriteDisposition.WRITE_TRUNCATE)
-        client.query(f"""
-            DELETE FROM `{target}`
-            WHERE service_date IN (SELECT DISTINCT service_date FROM `{staging}`)
-        """).result()
+
+        # Read the dates first and pass them as parameters rather than deleting with a
+        # subquery. The fact tables set require_partition_filter, and BigQuery cannot
+        # prune a partition from a subquery — `WHERE service_date IN (SELECT ...)` is
+        # refused outright as "no filter that can be used for partition elimination".
+        # The BETWEEN is what satisfies the option; the IN UNNEST keeps the semantics
+        # exact, so a feed with a gap in its dates does not delete the missing days.
+        dates = sorted(r.service_date for r in client.query(
+            f"SELECT DISTINCT service_date FROM `{staging}`").result())
+        if not dates:
+            raise ValueError(f"{staging} contains no service_date values; refusing to load")
+        client.query(
+            f"""DELETE FROM `{target}`
+                WHERE service_date BETWEEN @lo AND @hi
+                  AND service_date IN UNNEST(@dates)""",
+            job_config=bigquery.QueryJobConfig(query_parameters=[
+                bigquery.ScalarQueryParameter("lo", "DATE", dates[0]),
+                bigquery.ScalarQueryParameter("hi", "DATE", dates[-1]),
+                bigquery.ArrayQueryParameter("dates", "DATE", dates),
+            ])).result()
         client.query(f"INSERT INTO `{target}` SELECT * FROM `{staging}`").result()
         client.delete_table(staging, not_found_ok=True)
         counts[f"facts.{tbl}"] = client.get_table(target).num_rows

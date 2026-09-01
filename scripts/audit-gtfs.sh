@@ -56,6 +56,11 @@ section "Referential integrity across the warehouse (small BigQuery queries)"
 # with 95 stopping patterns instead of 119 and left 1,640 trips orphaned. This section
 # looks at the accumulated warehouse instead, and is the only part of this script that
 # is not free: a few MB of partitioned scan.
+#
+# The `service_date > DATE '2000-01-01'` in each query is not a filter, it is a
+# declaration. The facts tables set require_partition_filter so that nobody scans
+# 115M rows by accident; these three checks scan every partition on purpose, and the
+# constant is how that intent is stated to BigQuery.
 warehouse_bad=0
 while IFS=, read -r label n; do
   [ -z "$label" ] && continue
@@ -65,17 +70,20 @@ done < <(bq query --nouse_legacy_sql --format=csv --quiet <<'SQL' 2>/dev/null | 
 SELECT 'trips with a pattern not in dimensions' AS label, COUNT(*) AS n
 FROM `pulso-madrid.facts.cercanias_scheduled_trips` t
 LEFT JOIN `pulso-madrid.dimensions.cercanias_stop_patterns` p USING (stop_pattern_id)
-WHERE p.stop_pattern_id IS NULL
+WHERE t.service_date > DATE '2000-01-01'   -- deliberate full scan, satisfies require_partition_filter
+  AND p.stop_pattern_id IS NULL
 UNION ALL
 SELECT 'trips on a line not in dimensions', COUNT(*)
 FROM `pulso-madrid.facts.cercanias_scheduled_trips` t
 LEFT JOIN `pulso-madrid.dimensions.cercanias_lines` l USING (line_id)
-WHERE l.line_id IS NULL
+WHERE t.service_date > DATE '2000-01-01'
+  AND l.line_id IS NULL
 UNION ALL
 SELECT 'stops at a station not in dimensions', COUNT(*)
 FROM `pulso-madrid.facts.cercanias_scheduled_stops` s
 LEFT JOIN `pulso-madrid.dimensions.cercanias_stations` st ON st.station_id = s.station_id
-WHERE st.station_id IS NULL
+WHERE s.service_date > DATE '2000-01-01'
+  AND st.station_id IS NULL
 SQL
 )
 
