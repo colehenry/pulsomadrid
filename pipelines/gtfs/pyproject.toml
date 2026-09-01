@@ -5,6 +5,7 @@ description = "Ingest Renfe Cercanias + CRTM static GTFS for Madrid into BigQuer
 requires-python = ">=3.12"
 dependencies = [
   "duckdb>=1.1",
+  "google-auth>=2.35",
   "google-cloud-bigquery>=3.25",
   "google-cloud-storage>=2.18",
   "httpx>=0.27",
@@ -16,6 +17,7 @@ pulso-gtfs = "pulso_gtfs.main:cli"
 
 [dependency-groups]
 dev = [
+    "cryptography>=50.0.1",
     "pytest>=8",
     "ruff>=0.6",
 ]

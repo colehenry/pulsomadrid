@@ -5,8 +5,11 @@ their configuration the same way.
 """
 from __future__ import annotations
 
+import json
 import os
 from dataclasses import dataclass, field
+
+from google.oauth2 import service_account
 
 # Verified live, no auth, no key: 363 vehicles nationally on 2026-08-31T05:46Z.
 # The same feed is also published as protobuf (.pb); the JSON form is used here
@@ -49,3 +52,29 @@ class Config:
 
     def table(self, dataset: str, name: str) -> str:
         return f"{self.project}.{dataset}.{name}"
+
+
+def credentials() -> service_account.Credentials | None:
+    """Explicit credentials from a JSON key in the environment, or None to use ADC.
+
+    Railway — like most platform hosts — supplies a service-account key as JSON in an
+    environment variable, while Google's libraries expect GOOGLE_APPLICATION_CREDENTIALS
+    to hold a *path to a file*. Point that variable at JSON and authentication fails with
+    an error about a missing file.
+
+    Parsing it here and handing the client explicit credentials avoids writing a key to
+    disk at all: no temp file to create, secure, or clean up. When the variable is unset
+    this returns None, the clients fall back to Application Default Credentials, and
+    local development keeps working with nothing configured.
+    """
+    raw = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if not raw:
+        return None
+    try:
+        info = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            "GOOGLE_APPLICATION_CREDENTIALS_JSON is set but is not valid JSON. It should "
+            "hold the whole service-account key file, not a path to it."
+        ) from exc
+    return service_account.Credentials.from_service_account_info(info)

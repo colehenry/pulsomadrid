@@ -12,7 +12,7 @@ from pathlib import Path
 from google.api_core.exceptions import NotFound
 from google.cloud import bigquery
 
-from .config import Config
+from .config import Config, credentials
 
 log = logging.getLogger(__name__)
 
@@ -75,7 +75,7 @@ def _load(client: bigquery.Client, path: Path, table: str, mode: str) -> int:
 
 
 def load_all(cfg: Config, paths: dict[str, Path], client: bigquery.Client | None = None) -> dict[str, int]:
-    client = client or bigquery.Client(project=cfg.project)
+    client = client or bigquery.Client(project=cfg.project, credentials=credentials())
     counts: dict[str, int] = {}
 
     for key, tbl in RAW_TABLES.items():
@@ -120,7 +120,7 @@ def sweep_stale_runs(cfg: Config, older_than_hours: int = 6,
     freshness check that reads status wrong. Runs here take about four minutes, so
     anything still running after six hours is dead.
     """
-    client = client or bigquery.Client(project=cfg.project)
+    client = client or bigquery.Client(project=cfg.project, credentials=credentials())
     job = client.query(
         f"""UPDATE `{cfg.table(cfg.ds_ops, 'load_runs')}`
             SET status = 'abandoned',
@@ -144,7 +144,7 @@ def start_run(cfg: Config, load_id: str, source: str, url: str,
     buffer cannot be UPDATEd or DELETEd for roughly 90 minutes, so finish_run would
     fail with "would affect rows in the streaming buffer".
     """
-    client = client or bigquery.Client(project=cfg.project)
+    client = client or bigquery.Client(project=cfg.project, credentials=credentials())
     client.query(
         f"""INSERT INTO `{cfg.table(cfg.ds_ops, 'load_runs')}`
               (load_id, source, started_at, status, source_url, load_time)
@@ -160,7 +160,7 @@ def finish_run(cfg: Config, load_id: str, *, status: str, sha: str | None = None
                archive_uri: str | None = None, rows_read: int = 0, rows_loaded: int = 0,
                rows_rejected: int = 0, error: str | None = None,
                client: bigquery.Client | None = None) -> None:
-    client = client or bigquery.Client(project=cfg.project)
+    client = client or bigquery.Client(project=cfg.project, credentials=credentials())
     client.query(
         f"""UPDATE `{cfg.table(cfg.ds_ops, 'load_runs')}`
             SET finished_at = CURRENT_TIMESTAMP(), status = @status,
@@ -182,7 +182,7 @@ def finish_run(cfg: Config, load_id: str, *, status: str, sha: str | None = None
 
 def previous_hash(cfg: Config, source: str, client: bigquery.Client | None = None) -> str | None:
     """Hash of the last file we successfully loaded, for skipping unchanged feeds."""
-    client = client or bigquery.Client(project=cfg.project)
+    client = client or bigquery.Client(project=cfg.project, credentials=credentials())
     rows = list(client.query(
         f"""SELECT source_file_hash FROM `{cfg.table(cfg.ds_ops, 'load_runs')}`
             WHERE source = @s AND status = 'succeeded' AND source_file_hash IS NOT NULL

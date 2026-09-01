@@ -8,3 +8,11 @@ output "raw_bucket" {
   value       = "gs://${google_storage_bucket.raw.name}"
 }
 
+
+output "service_accounts" {
+  description = "Identities the Railway services authenticate as. Keys are created by hand — see README.md."
+  value = {
+    api    = google_service_account.api.email
+    ingest = google_service_account.ingest.email
+  }
+}

@@ -10,6 +10,8 @@ from pathlib import Path
 import httpx
 from google.cloud import storage
 
+from .config import credentials
+
 log = logging.getLogger(__name__)
 
 
@@ -31,7 +33,7 @@ def archive(local: Path, bucket: str, source: str, when: datetime | None = None)
     """Copy the original file to GCS, unmodified. This is the reprocessing layer."""
     when = when or datetime.now(UTC)
     key = f"{source}/{when:%Y/%m/%d}/{when:%Y-%m-%dT%H%M%SZ}{''.join(local.suffixes)}"
-    blob = storage.Client().bucket(bucket).blob(key)
+    blob = storage.Client(credentials=credentials()).bucket(bucket).blob(key)
     blob.upload_from_filename(local)
     uri = f"gs://{bucket}/{key}"
     log.info("archived %s", uri)

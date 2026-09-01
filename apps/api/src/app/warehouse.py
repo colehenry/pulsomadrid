@@ -15,7 +15,7 @@ from datetime import UTC, datetime
 
 from google.cloud import bigquery
 
-from .config import Config
+from .config import Config, credentials
 from .models import Line, Station
 
 log = logging.getLogger(__name__)
@@ -89,7 +89,7 @@ def _linestring_coordinates(geojson: str) -> list[tuple[float, float]]:
 
 def read_snapshot(cfg: Config, client: bigquery.Client | None = None) -> Snapshot:
     """Read the whole network and the current trip lookup from BigQuery."""
-    client = client or bigquery.Client(project=cfg.project)
+    client = client or bigquery.Client(project=cfg.project, credentials=credentials())
     dim, fact = cfg.ds_dimensions, cfg.ds_facts
 
     station_rows = list(client.query(STATIONS_SQL.format(
