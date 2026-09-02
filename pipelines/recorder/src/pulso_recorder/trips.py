@@ -13,7 +13,7 @@ through.
 from __future__ import annotations
 
 import logging
-from datetime import date
+from datetime import date, datetime
 
 from google.cloud import bigquery
 
@@ -26,7 +26,8 @@ log = logging.getLogger(__name__)
 # train that departed before midnight is still running after it -- 748 Madrid trips cross
 # midnight. Partition-filtered, so this reads a few hundred KB rather than the table.
 TRIPS_SQL = """
-SELECT trip_id, train_number, line_id, service_date
+SELECT trip_id, train_number, line_id, service_date,
+       scheduled_departure, scheduled_arrival
 FROM `{trips}`
 WHERE service_date BETWEEN DATE_SUB(CURRENT_DATE('Europe/Madrid'), INTERVAL 1 DAY)
                        AND DATE_ADD(CURRENT_DATE('Europe/Madrid'), INTERVAL 1 DAY)
@@ -51,13 +52,29 @@ class TripLookup:
         self.stations: set[str] = set()
         self.loaded_at: date | None = None
 
+    def expected_running(self, at: datetime) -> int:
+        """How many Madrid trains the timetable says should be moving at this instant.
+
+        This is the yardstick the feed is measured against. Comparing a publication to the
+        *previous* publication cannot detect a sustained fault: once Renfe stops sending
+        Madrid entirely, every publication agrees with the last one and the outage reads
+        as a quiet network. Comparing against the schedule cannot be fooled that way, and
+        it needs no hardcoded service hours — at 02:00 the schedule expects nothing, so
+        an empty feed is correctly silent.
+        """
+        return sum(1 for t in self.trips.values()
+                   if t.scheduled_departure and t.scheduled_arrival
+                   and t.scheduled_departure <= at <= t.scheduled_arrival)
+
     def refresh(self) -> int:
         trips_table = self._cfg.table(self._cfg.ds_facts, "cercanias_scheduled_trips")
         stations_table = self._cfg.table(self._cfg.ds_dimensions, "cercanias_stations")
         rows = list(self._client.query(TRIPS_SQL.format(trips=trips_table)).result())
         trips = {
             r.trip_id: Trip(train_number=r.train_number, line_id=r.line_id,
-                            service_date=r.service_date)
+                            service_date=r.service_date,
+                            scheduled_departure=r.scheduled_departure,
+                            scheduled_arrival=r.scheduled_arrival)
             for r in rows
         }
         stations = {r.station_id for r in

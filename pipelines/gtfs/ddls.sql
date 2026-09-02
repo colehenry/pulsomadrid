@@ -354,7 +354,7 @@ CREATE TABLE IF NOT EXISTS `pulso-madrid.ops.load_runs` (
   source            STRING    NOT NULL OPTIONS(description="Which source was loaded: 'renfe_gtfs', 'crtm_gtfs', 'padron' and so on"),
   started_at        TIMESTAMP NOT NULL OPTIONS(description="When the run started"),
   finished_at       TIMESTAMP          OPTIONS(description="When the run finished. NULL while running"),
-  status            STRING             OPTIONS(description="'running', 'succeeded', 'failed', or 'abandoned' where a run was killed before it could record an outcome and a later run swept it"),
+  status            STRING             OPTIONS(description="'running', 'succeeded', 'degraded', 'failed', or 'abandoned' where a run was killed before it could record an outcome and a later run swept it. 'degraded' means our side worked but the batch captured nothing while the timetable expected trains to be running — the shape a Renfe outage takes, where every request succeeds and Madrid is simply absent from the payload"),
   source_url        STRING             OPTIONS(description="URL the file was downloaded from"),
   source_file_hash  STRING             OPTIONS(description="SHA256 of the downloaded file. If it matches the previous run, the feed has not changed and the load can be skipped"),
   archive_uri       STRING             OPTIONS(description="gs:// path of the unmodified original file"),

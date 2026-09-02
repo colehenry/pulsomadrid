@@ -69,6 +69,8 @@ class Trip:
     train_number: str
     line_id: str
     service_date: date
+    scheduled_departure: datetime | None = None
+    scheduled_arrival: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -299,22 +301,24 @@ def ended_alert_row(alert_id: str, content_hash_value: str, observed_at: datetim
     }
 
 
-def is_partial_snapshot(n_madrid: int, n_entities: int, previous_madrid: int) -> bool:
-    """Whether this publication is one of Renfe's incomplete national snapshots.
+def is_feed_missing_madrid(n_madrid: int, n_entities: int, expected_running: int) -> bool:
+    """Whether this publication is missing Madrid rather than reporting a quiet network.
 
-    Some of Renfe's backends serve a payload with a fresh header timestamp, its own ETag,
-    a valid structure -- and a third of the country missing. Measured live: a full
-    snapshot carries 270-320 entities of which 33-38% are Madrid; a partial carries
-    170-215 of which *exactly zero* are Madrid. The nucleo is dropped whole, never
-    partially, in roughly one publication in five.
+    Renfe serves incomplete national snapshots from some of its backends: a fresh header
+    timestamp, its own ETag, a valid structure — and a whole nucleo absent. Measured, a
+    full snapshot carries 270-320 entities of which 33-38% are Madrid; a partial carries
+    170-215 of which *exactly zero* are. The nucleo is dropped whole, never partially.
 
-    The test is relative rather than a threshold on entity count, because 300 entities is
-    a full snapshot at 19:00 and an impossible one at 06:00 -- any fixed number would
-    drift through the day. Zero Madrid trains when the previous publication had some is a
-    broken snapshot. Zero when the previous one was also zero is the network asleep, which
-    is real and must still be recorded as such.
+    The yardstick is our own timetable, not the previous publication. An earlier version
+    compared against the last publication, which catches a one-off partial and is blind to
+    a sustained one: once Renfe stops sending Madrid entirely, every publication agrees
+    with the one before it and a half-hour blackout at Wednesday rush hour reads as a
+    quiet network. That happened on 2026-09-02, 7 publications out of 7.
+
+    The schedule cannot be fooled that way and needs no hardcoded service hours: at 02:00
+    it expects nothing, so an empty feed is correctly silent rather than an alarm.
     """
-    return n_madrid == 0 and previous_madrid > 0 and n_entities > 0
+    return n_madrid == 0 and expected_running > 0 and n_entities > 0
 
 
 def diff_alert_versions(

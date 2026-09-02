@@ -18,7 +18,7 @@ from pulso_recorder.feeds import (
     diff_alert_versions,
     ended_alert_row,
     header_timestamp,
-    is_partial_snapshot,
+    is_feed_missing_madrid,
     parse_alerts,
     parse_platform,
     parse_trains,
@@ -250,25 +250,27 @@ def test_service_day_is_cut_at_three_in_the_morning():
 
 # ------------------------------------------------------------------ partial snapshots
 
-def test_partial_snapshot_is_zero_madrid_after_a_publication_that_had_some():
+def test_feed_missing_madrid_is_caught_against_the_schedule():
     """Measured live: a partial carries 170-215 entities and exactly zero Madrid."""
-    assert is_partial_snapshot(n_madrid=0, n_entities=210, previous_madrid=104) is True
+    assert is_feed_missing_madrid(n_madrid=0, n_entities=210, expected_running=104) is True
 
 
-def test_a_quiet_network_is_not_a_partial_snapshot():
-    """Zero after zero is the network asleep, and must still be recorded as such."""
-    assert is_partial_snapshot(n_madrid=0, n_entities=0, previous_madrid=0) is False
-    assert is_partial_snapshot(n_madrid=0, n_entities=173, previous_madrid=0) is False
+def test_a_sustained_blackout_is_still_caught():
+    """The bug this replaced: comparing to the previous publication went blind once
+    every publication was missing Madrid. 7 of 7 on 2026-09-02 read as a quiet network."""
+    for _ in range(7):
+        assert is_feed_missing_madrid(n_madrid=0, n_entities=210, expected_running=98) is True
 
 
-def test_a_full_snapshot_is_never_partial():
-    assert is_partial_snapshot(n_madrid=104, n_entities=309, previous_madrid=106) is False
-    assert is_partial_snapshot(n_madrid=1, n_entities=300, previous_madrid=106) is False
+def test_a_genuinely_quiet_network_is_not_an_alarm():
+    """At 02:00 the schedule expects nothing, so an empty feed is correct and silent."""
+    assert is_feed_missing_madrid(n_madrid=0, n_entities=0, expected_running=0) is False
+    assert is_feed_missing_madrid(n_madrid=0, n_entities=173, expected_running=0) is False
 
 
-def test_the_test_is_relative_not_a_count_threshold():
-    """A small snapshot is normal at 06:00; what matters is Madrid vanishing."""
-    assert is_partial_snapshot(n_madrid=12, n_entities=40, previous_madrid=14) is False
+def test_a_full_snapshot_is_never_flagged():
+    assert is_feed_missing_madrid(n_madrid=104, n_entities=309, expected_running=106) is False
+    assert is_feed_missing_madrid(n_madrid=1, n_entities=300, expected_running=106) is False
 
 
 def test_alerts_naming_none_while_some_are_open_is_disbelieved():

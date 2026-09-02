@@ -36,7 +36,7 @@ from .feeds import (
     alerts_look_partial,
     diff_alert_versions,
     header_timestamp,
-    is_partial_snapshot,
+    is_feed_missing_madrid,
     parse_alerts,
     parse_trains,
 )
@@ -49,6 +49,12 @@ log = logging.getLogger("pulso_recorder")
 # The feeds publish every ~20s around the clock, including through the five hours a night
 # when the network sleeps and they carry a valid header with no entities at all.
 STALE_AFTER_SECONDS = 300
+
+# How soon to try again when the trip lookup comes back empty. The normal refresh is
+# 15 minutes, which is right for a lookup that works and far too slow for one that
+# does not: with no trips every train is unmatched, so the recorder records nothing
+# and says nothing. That cost 27 minutes on 2026-09-02.
+EMPTY_LOOKUP_RETRY_SECONDS = 60
 
 
 def _configure_logging() -> None:
@@ -82,6 +88,7 @@ class Recorder:
         self.publications = 0
         self.partial_publications = 0
         self.last_madrid_trains = 0
+        self.expected_running = 0
         self._stopping = False
 
     def start(self) -> None:
@@ -152,13 +159,14 @@ class Recorder:
 
         # Renfe serves incomplete national snapshots from some of its backends. The whole
         # publication is skipped, not just its trains, because the alerts in it come from
-        # the same backend. See feeds.is_partial_snapshot for the measurements.
-        if is_partial_snapshot(len(rows), n_entities, self.last_madrid_trains):
+        # the same backend. See feeds.is_feed_missing_madrid for the measurements.
+        expected = self.lookup.expected_running(observed_at)
+        self.expected_running = expected
+        if is_feed_missing_madrid(len(rows), n_entities, expected):
             self.partial_publications += 1
-            log.warning("%s: partial snapshot — %d entities, 0 of them Madrid, "
-                        "previous publication had %d. Skipped",
-                        observed_at.isoformat(timespec="seconds"), n_entities,
-                        self.last_madrid_trains)
+            log.warning("%s: feed is missing Madrid — %d entities, 0 of them Madrid, "
+                        "while the schedule expects %d train(s) running. Skipped",
+                        observed_at.isoformat(timespec="seconds"), n_entities, expected)
             return True
 
         self.last_madrid_trains = len(rows)
@@ -167,10 +175,16 @@ class Recorder:
         cancelled = sum(1 for r in rows if r.get("schedule_relationship") == "CANCELED")
         stopped = sum(1 for r in rows if r.get("current_status") == "STOPPED_AT")
         if not rows and n_entities == 0:
-            # A live feed with no entities is the network asleep, not an outage. The
-            # header timestamp above is what proves the difference.
-            log.info("%s: feed live and empty — no trains running",
-                     observed_at.isoformat(timespec="seconds"))
+            # A live feed with no entities is the network asleep, not an outage — but only
+            # if the timetable agrees. The header timestamp proves the feed is alive; the
+            # schedule proves whether anything should be on it.
+            if expected:
+                log.error("%s: feed is live and completely empty while the schedule "
+                          "expects %d train(s) running",
+                          observed_at.isoformat(timespec="seconds"), expected)
+            else:
+                log.info("%s: feed live and empty — no trains scheduled",
+                         observed_at.isoformat(timespec="seconds"))
         else:
             log.info("%s: %d madrid of %d entities (%d stopped, %d cancelled), "
                      "%d alert version(s), %d anomal(ies)",
@@ -237,7 +251,8 @@ class Recorder:
                 counts = self.writer.flush(
                     load_id=f"{datetime.now(UTC):%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:6]}",
                     source_timestamp=self.last_header, feed_ok=feed_ok,
-                    partial_publications=self.partial_publications)
+                    partial_publications=self.partial_publications,
+                    expected_running=self.expected_running)
                 log.info("batch loaded: %d train row(s), %d alert row(s), %d anomal(ies), "
                          "%d publication(s) since last batch, %d partial snapshot(s) skipped",
                          counts["trains"], counts["alerts"], counts["anomalies"],
@@ -249,7 +264,13 @@ class Recorder:
             if self._stopping or once:
                 return 0
 
-            if now - last_refresh >= self.cfg.trips_refresh_seconds:
+            # Retry hard when the lookup is empty. Waiting the normal 15 minutes means
+            # recording nothing for 15 minutes, and an empty lookup is exactly the state
+            # a restart lands in if the query happens to run while the static loader is
+            # between its DELETE and its INSERT.
+            due = (EMPTY_LOOKUP_RETRY_SECONDS if not self.lookup.trips
+                   else self.cfg.trips_refresh_seconds)
+            if now - last_refresh >= due:
                 self.lookup.refresh()
                 last_refresh = now
 

@@ -118,7 +118,7 @@ class Writer:
 
     def flush(self, load_id: str, *, source_timestamp: datetime | None,
               feed_ok: bool, error: str | None = None,
-              partial_publications: int = 0) -> dict[str, int]:
+              partial_publications: int = 0, expected_running: int = 0) -> dict[str, int]:
         """Write everything buffered, then record the batch in ops.load_runs.
 
         Buffers are cleared only after the load succeeds. A failed load leaves the rows
@@ -144,6 +144,13 @@ class Writer:
                           load_id, self.pending)
         if not feed_ok:
             status = "failed"
+        elif status == "succeeded" and counts["trains"] == 0 and expected_running > 0:
+            # Our side worked, so this is not a failure — but a batch that captured no
+            # trains while the timetable says trains are running is not a success either,
+            # and calling it one is how a Madrid blackout looked healthy for half an hour.
+            status = "degraded"
+            message = message or (
+                f"no trains captured while the schedule expects {expected_running} running")
 
         self._record_run(load_id, started, status, message, counts, source_timestamp,
                          partial_publications)
