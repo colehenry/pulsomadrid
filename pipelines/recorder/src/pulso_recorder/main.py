@@ -125,7 +125,20 @@ class Recorder:
 
         age = (datetime.now(UTC) - observed_at).total_seconds()
         if age > STALE_AFTER_SECONDS:
-            log.error("feed is stale: header is %.0fs old — treating as an outage", age)
+            # A stale header is only an outage if trains were running when it went stale.
+            # Renfe stops refreshing the timestamp overnight rather than publishing an
+            # empty feed forever, so between roughly 00:30 and 05:00 a stale header is the
+            # network asleep. Measured: every one of 56 "failed" batches fell in hours
+            # 00-04 Madrid, and none in 05-23.
+            #
+            # The test is the previous publication rather than the clock, so it needs no
+            # hardcoded service hours and stays correct if they change.
+            if self.last_madrid_trains == 0:
+                log.info("feed has not updated for %.0fs and no trains were running — "
+                         "the network is asleep", age)
+                return True
+            log.error("feed is stale: header is %.0fs old while %d train(s) were running "
+                      "— treating as an outage", age, self.last_madrid_trains)
             return False
 
         if observed_at == self.last_header:

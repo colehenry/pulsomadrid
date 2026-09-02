@@ -94,12 +94,34 @@ def _merge_dimension(client: bigquery.Client, path: Path, target: str, natural_k
     the last time the feed contained it.
     """
     staging = f"{target}__staging"
+    # Delete any leftover staging table before loading. _load pins its schema to whatever
+    # the table already declares, so a staging table left behind by a failed run makes
+    # every later run inherit that run's inferred schema — which is how one failure here
+    # became nine in a row.
+    client.delete_table(staging, not_found_ok=True)
     _load(client, path, staging, bigquery.WriteDisposition.WRITE_TRUNCATE)
 
-    columns = [f.name for f in client.get_table(target).schema]
-    assignments = ", ".join(f"T.{c} = S.{c}" for c in columns)
+    target_fields = {f.name: f.field_type for f in client.get_table(target).schema}
+    staging_fields = {f.name: f.field_type for f in client.get_table(staging).schema}
+
+    def source(column: str) -> str:
+        """S.column, converted where the staging type cannot be assigned to the target.
+
+        DuckDB writes a GEOGRAPHY as WKT text in Parquet, and the staging table's schema
+        is inferred from that file, so `location` arrives as STRING while the target
+        declares GEOGRAPHY. BigQuery refuses the assignment outright:
+        "Value of type STRING cannot be assigned to T.location". Converting here rather
+        than pinning the staging schema keeps the load itself forgiving of whatever
+        DuckDB emits, and the conversion is explicit where a reader will look for it.
+        """
+        if target_fields.get(column) == "GEOGRAPHY" and staging_fields.get(column) == "STRING":
+            return f"ST_GEOGFROMTEXT(S.{column})"
+        return f"S.{column}"
+
+    columns = list(target_fields)
+    assignments = ", ".join(f"T.{c} = {source(c)}" for c in columns)
     names = ", ".join(columns)
-    values = ", ".join(f"S.{c}" for c in columns)
+    values = ", ".join(source(c) for c in columns)
 
     client.query(f"UPDATE `{target}` SET active = FALSE WHERE TRUE").result()
     client.query(f"""
