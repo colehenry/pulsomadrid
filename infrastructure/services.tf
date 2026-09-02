@@ -33,6 +33,17 @@ resource "google_service_account" "recorder" {
   project      = var.project_id
 }
 
+# Separate again, and for a sharper reason than `recorder` vs `ingest`. The Metro poller
+# talks to an undocumented endpoint that can hang, throttle or start erroring without
+# notice. The Cercanias recorder is capturing data nobody archives and that cannot be
+# re-collected, so it must not share a failure domain — or an identity — with this.
+resource "google_service_account" "metro" {
+  account_id   = "pulso-metro"
+  display_name = "Pulso Metro poller"
+  description  = "Polls CRTM Metro arrivals, appends observations to BigQuery, archives to GCS."
+  project      = var.project_id
+}
+
 # Running any query needs this at project level. It grants the right to *start a job*,
 # not the right to read any particular data — that is the dataset grants below.
 resource "google_project_iam_member" "bigquery_job_user" {
@@ -40,6 +51,7 @@ resource "google_project_iam_member" "bigquery_job_user" {
     api      = google_service_account.api.email
     ingest   = google_service_account.ingest.email
     recorder = google_service_account.recorder.email
+    metro    = google_service_account.metro.email
   }
 
   project = var.project_id
@@ -102,4 +114,21 @@ resource "google_storage_bucket_iam_member" "recorder_archive_writer" {
   bucket = google_storage_bucket.raw.name
   role   = "roles/storage.objectCreator"
   member = "serviceAccount:${google_service_account.recorder.email}"
+}
+
+# The Metro poller owns the metro_* dimension tables as well as its observations, so it
+# edits dimensions rather than only reading them. Nothing on raw or marts.
+resource "google_bigquery_dataset_iam_member" "metro_writer" {
+  for_each = toset(["facts", "ops", "dimensions"])
+
+  dataset_id = google_bigquery_dataset.this[each.key].dataset_id
+  project    = var.project_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:${google_service_account.metro.email}"
+}
+
+resource "google_storage_bucket_iam_member" "metro_archive_writer" {
+  bucket = google_storage_bucket.raw.name
+  role   = "roles/storage.objectCreator"
+  member = "serviceAccount:${google_service_account.metro.email}"
 }

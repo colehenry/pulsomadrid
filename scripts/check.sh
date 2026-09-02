@@ -24,6 +24,12 @@ if [ -f pipelines/recorder/pyproject.toml ]; then
   step "recorder pytest" bash -c 'cd pipelines/recorder && uv run pytest -q'
 else warn "pipelines/recorder not scaffolded yet"; fi
 
+if [ -f pipelines/metro/pyproject.toml ]; then
+  step "metro ruff"   bash -c 'cd pipelines/metro && uv run ruff check src tests'
+  step "metro mypy"   bash -c 'cd pipelines/metro && uv run mypy .'
+  step "metro pytest" bash -c 'cd pipelines/metro && uv run pytest -q'
+else warn "pipelines/metro not scaffolded yet"; fi
+
 if [ -f apps/web/package.json ]; then
   step "eslint" bash -c 'cd apps/web && npm run lint'
   step "tsc"    bash -c 'cd apps/web && npx tsc --noEmit'

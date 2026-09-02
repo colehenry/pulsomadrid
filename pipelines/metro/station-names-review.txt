@@ -1,0 +1,246 @@
+# All 242 Metro station names as they will be displayed.
+# Source name on the left, what a passenger sees on the right.
+# Wrong ones: fix ACCENTS in src/pulso_metro/names.py.
+
+ABRANTES                         Abrantes
+ACACIAS                          Acacias
+AEROPUERTO T-4                   Aeropuerto T-4
+AEROPUERTO T1-T2-T3              Aeropuerto T1-T2-T3
+ALAMEDA DE OSUNA                 Alameda de Osuna
+ALCORCON CENTRAL                 Alcorcón Central
+ALFONSO XIII                     Alfonso XIII
+ALMENDRALES                      Almendrales
+ALONSO CANO                      Alonso Cano
+ALONSO DE MENDOZA                Alonso de Mendoza
+ALONSO MARTINEZ                  Alonso Martínez
+ALSACIA                          Alsacia
+ALTO DE EXTREMADURA              Alto de Extremadura
+ALTO DEL ARENAL                  Alto del Arenal
+ALUCHE                           Aluche
+ALVARADO                         Alvarado
+ANTON MARTIN                     Antón Martín
+ANTONIO MACHADO                  Antonio Machado
+ARGANDA DEL REY                  Arganda del Rey
+ARGANZUELA-PLANETARIO            Arganzuela-Planetario
+ARGÜELLES                        Argüelles
+ARROYO CULEBRO                   Arroyo Culebro
+ARROYOFRESNO                     Arroyofresno
+ARTILLEROS                       Artilleros
+ARTURO SORIA                     Arturo Soria
+ASCAO                            Ascao
+ATOCHA                           Atocha
+AVENIDA DE AMERICA               Avenida de América
+AVENIDA DE GUADALAJARA           Avenida de Guadalajara
+AVENIDA DE LA ILUSTRACION        Avenida de la Ilustración
+AVENIDA DE LA PAZ                Avenida de la Paz
+AVIACION ESPAÑOLA                Aviación Española
+BAMBU                            Bambú
+BANCO DE ESPAÑA                  Banco de España
+BARAJAS                          Barajas
+BARRIO DE LA CONCEPCION          Barrio de la Concepción
+BARRIO DEL PILAR                 Barrio del Pilar
+BARRIO DEL PUERTO                Barrio del Puerto
+BATAN                            Batán
+BAUNATAL                         Baunatal
+BEGOÑA                           Begoña
+BILBAO                           Bilbao
+BUENOS AIRES                     Buenos Aires
+CALLAO                           Callao
+CAMPAMENTO                       Campamento
+CANAL                            Canal
+CANILLAS                         Canillas
+CANILLEJAS                       Canillejas
+CARABANCHEL                      Carabanchel
+CARABANCHEL ALTO                 Carabanchel Alto
+CARPETANA                        Carpetana
+CARTAGENA                        Cartagena
+CASA DE CAMPO                    Casa de Campo
+CASA DEL RELOJ                   Casa del Reloj
+CHAMARTIN                        Chamartín
+CHUECA                           Chueca
+CIUDAD DE LOS ANGELES            Ciudad de los Ángeles
+CIUDAD LINEAL                    Ciudad Lineal
+CIUDAD UNIVERSITARIA             Ciudad Universitaria
+COLOMBIA                         Colombia
+COLON                            Colón
+COLONIA JARDIN                   Colonia Jardín
+CONCHA ESPINA                    Concha Espina
+CONDE DE CASAL                   Conde de Casal
+CONGOSTO                         Congosto
+CONSERVATORIO                    Conservatorio
+COSLADA CENTRAL                  Coslada Central
+CRUZ DEL RAYO                    Cruz del Rayo
+CUATRO CAMINOS                   Cuatro Caminos
+CUATRO VIENTOS                   Cuatro Vientos
+CUZCO                            Cuzco
+DELICIAS                         Delicias
+DIEGO DE LEON                    Diego de León
+DUQUE DE PASTRANA                Duque de Pastrana
+EL BERCIAL                       El Bercial
+EL CAPRICHO                      El Capricho
+EL CARMEN                        El Carmen
+EL CARRASCAL                     El Carrascal
+EL CASAR                         El Casar
+EMBAJADORES                      Embajadores
+EMPALME                          Empalme
+ESPERANZA                        Esperanza
+ESTACION DEL ARTE                Estación del Arte
+ESTADIO METROPOLITANO            Estadio Metropolitano
+ESTRECHO                         Estrecho
+ESTRELLA                         Estrella
+EUGENIA DE MONTIJO               Eugenia de Montijo
+FERIA DE MADRID                  Feria de Madrid
+FRANCOS RODRIGUEZ                Francos Rodríguez
+FUENCARRAL                       Fuencarral
+FUENLABRADA CENTRAL              Fuenlabrada Central
+GARCIA NOBLEJAS                  García Noblejas
+GETAFE CENTRAL                   Getafe Central
+GOYA                             Goya
+GRAN VIA                         Gran Vía
+GREGORIO MARAÑON                 Gregorio Marañón
+GUZMAN EL BUENO                  Guzmán el Bueno
+HENARES                          Henares
+HERRERA ORIA                     Herrera Oria
+HORTALEZA                        Hortaleza
+HOSPITAL 12 DE OCTUBRE           Hospital 12 de Octubre
+HOSPITAL DE FUENLABRADA          Hospital de Fuenlabrada
+HOSPITAL DE MOSTOLES             Hospital de Móstoles
+HOSPITAL DEL HENARES             Hospital del Henares
+HOSPITAL INFANTA SOFIA           Hospital Infanta Sofía
+HOSPITAL SEVERO OCHOA            Hospital Severo Ochoa
+IBIZA                            Ibiza
+IGLESIA                          Iglesia
+ISLAS FILIPINAS                  Islas Filipinas
+JARAMA                           Jarama
+JOAQUIN VILUMBRALES              Joaquín Vilumbrales
+JUAN DE LA CIERVA                Juan de la Cierva
+JULIAN BESTEIRO                  Julián Besteiro
+LA ALMUDENA                      La Almudena
+LA ELIPA                         La Elipa
+LA FORTUNA                       La Fortuna
+LA GAVIA                         La Gavia
+LA GRANJA                        La Granja
+LA LATINA                        La Latina
+LA MORALEJA                      La Moraleja
+LA PESETA                        La Peseta
+LA POVEDA                        La Poveda
+LA RAMBLA                        La Rambla
+LACOMA                           Lacoma
+LAGO                             Lago
+LAGUNA                           Laguna
+LAS MUSAS                        Las Musas
+LAS ROSAS                        Las Rosas
+LAS SUERTES                      Las Suertes
+LAS TABLAS                       Las Tablas
+LAVAPIES                         Lavapiés
+LEGANES CENTRAL                  Leganés Central
+LEGAZPI                          Legazpi
+LISTA                            Lista
+LORANCA                          Loranca
+LOS ESPARTALES                   Los Espartales
+LUCERO                           Lucero
+MANOTERAS                        Manoteras
+MANUEL BECERRA                   Manuel Becerra
+MANUEL DE FALLA                  Manuel de Falla
+MANUELA MALASAÑA                 Manuela Malasaña
+MAR DE CRISTAL                   Mar de Cristal
+MARQUES DE LA VALDAVIA           Marqués de la Valdavia
+MARQUES DE VADILLO               Marqués de Vadillo
+MENDEZ ALVARO                    Méndez Álvaro
+MENENDEZ PELAYO                  Menéndez Pelayo
+MIGUEL HERNANDEZ                 Miguel Hernández
+MIRASIERRA                       Mirasierra
+MONCLOA                          Moncloa
+MONTECARMELO                     Montecarmelo
+MOSTOLES CENTRAL                 Móstoles Central
+NOVICIADO                        Noviciado
+NUEVA NUMANCIA                   Nueva Numancia
+NUEVOS MINISTERIOS               Nuevos Ministerios
+NUÑEZ DE BALBOA                  Núñez de Balboa
+O'DONNELL                        O'Donnell
+OPAÑEL                           Opañel
+OPERA                            Ópera
+OPORTO                           Oporto
+PACIFICO                         Pacífico
+PACO DE LUCIA                    Paco de Lucía
+PALOS DE LA FRONTERA             Palos de la Frontera
+PAN BENDITO                      Pan Bendito
+PARQUE DE LAS AVENIDAS           Parque de las Avenidas
+PARQUE DE LOS ESTADOS            Parque de los Estados
+PARQUE DE SANTA MARIA            Parque de Santa María
+PARQUE EUROPA                    Parque Europa
+PARQUE LISBOA                    Parque Lisboa
+PARQUE OESTE                     Parque Oeste
+PAVONES                          Pavones
+PEÑAGRANDE                       Peñagrande
+PINAR DE CHAMARTIN               Pinar de Chamartin
+PINAR DEL REY                    Pinar del Rey
+PIO XII                          Pío XII
+PIRAMIDES                        Pirámides
+PITIS                            Pitis
+PLAZA DE CASTILLA                Plaza de Castilla
+PLAZA DE ESPAÑA                  Plaza de España
+PLAZA ELIPTICA                   Plaza Elíptica
+PORTAZGO                         Portazgo
+PRADILLO                         Pradillo
+PRINCIPE DE VERGARA              Príncipe de Vergara
+PRINCIPE PIO                     Príncipe Pío
+PROSPERIDAD                      Prosperidad
+PUEBLO NUEVO                     Pueblo Nuevo
+PUENTE DE VALLECAS               Puente de Vallecas
+PUERTA DE ARGANDA                Puerta de Arganda
+PUERTA DE TOLEDO                 Puerta de Toledo
+PUERTA DEL ANGEL                 Puerta del Angel
+PUERTA DEL SUR                   Puerta del Sur
+QUEVEDO                          Quevedo
+QUINTANA                         Quintana
+REPUBLICA ARGENTINA              República Argentina
+RETIRO                           Retiro
+REYES CATOLICOS                  Reyes Católicos
+RIOS ROSAS                       Ríos Rosas
+RIVAS FUTURA                     Rivas Futura
+RIVAS URBANIZACIONES             Rivas Urbanizaciones
+RIVAS VACIAMADRID                Rivas Vaciamadrid
+RONDA DE LA COMUNICACION         Ronda de la Comunicación
+RUBEN DARIO                      Rubén Darío
+SAINZ DE BARANDA                 Sainz de Baranda
+SAN BERNARDO                     San Bernardo
+SAN BLAS                         San Blas
+SAN CIPRIANO                     San Cipriano
+SAN CRISTOBAL                    San Cristóbal
+SAN FERMIN-ORCASUR               San Fermín-Orcasur
+SAN FERNANDO                     San Fernando
+SAN FRANCISCO                    San Francisco
+SAN LORENZO                      San Lorenzo
+SAN NICASIO                      San Nicasio
+SANTIAGO BERNABEU                Santiago Bernabéu
+SANTO DOMINGO                    Santo Domingo
+SERRANO                          Serrano
+SEVILLA                          Sevilla
+SIERRA DE GUADALUPE              Sierra de Guadalupe
+SIMANCAS                         Simancas
+SOL                              Sol
+SUANZES                          Suanzes
+TETUAN                           Tetuán
+TIRSO DE MOLINA                  Tirso de Molina
+TORRE ARIAS                      Torre Arias
+TRES OLIVOS                      Tres Olivos
+TRIBUNAL                         Tribunal
+UNIVERSIDAD REY JUAN CARLOS      Universidad Rey Juan Carlos
+URGEL                            Urgel
+USERA                            Usera
+VALDEACEDERAS                    Valdeacederas
+VALDEBERNARDO                    Valdebernardo
+VALDECARROS                      Valdecarros
+VALDEZARZA                       Valdezarza
+VELAZQUEZ                        Velázquez
+VENTAS                           Ventas
+VENTILLA                         Ventilla
+VENTURA RODRIGUEZ                Ventura Rodríguez
+VICALVARO                        Vicálvaro
+VICENTE ALEIXANDRE               Vicente Aleixandre
+VILLA DE VALLECAS                Villa de Vallecas
+VILLAVERDE ALTO                  Villaverde Alto
+VILLAVERDE BAJO CRUCE            Villaverde Bajo Cruce
+VINATEROS                        Vinateros
+VISTA ALEGRE                     Vista Alegre
